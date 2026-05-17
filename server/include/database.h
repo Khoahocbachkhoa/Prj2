@@ -1,0 +1,31 @@
+#ifndef DATABASE_H
+#define DATABASE_H
+
+#include <libpq-fe.h>
+
+typedef enum {
+    DB_OK = 0,
+    DB_ERR_CONNECTION_FAILED,
+    DB_ERR_NOT_CONNECTED,
+    DB_ERR_QUERY_FAILED,
+    DB_ERR_TABLE_CREATE_FAILED,
+    DB_ERR_INVALID_ARGUMENT
+} db_status;
+
+typedef enum {
+    DB_DISCONNECTED = 0,
+    DB_CONNECTED = 1
+} db_connection_state;
+
+extern const char *g_db_conninfo;
+
+// Khởi tạo 1 connection mới
+PGconn *db_connect(const char *conninfo);
+
+// Đóng 1 connection
+void db_disconnect(PGconn *conn);
+
+// Kiểm tra trạng thái
+db_connection_state db_is_connected(PGconn *conn);
+
+#endif

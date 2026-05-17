@@ -1,0 +1,36 @@
+1. Đăng ký người dùng:
+    Mô tả: 
+        Client gửi yêu cầu đăng ký kèm tài khoản + mật khẩu tới server.
+    request:
+        REGISTER <username> <password>
+    response:
+        200 REGISTER_SUCCESS
+            Đăng ký thành công
+        409 USER_EXISTS
+            Tên đăng nhập đã tồn tại
+        400 BAD_REQUEST 
+            Sai định dạng
+        422 WEAK_PASSWORD
+            Mật khẩu quá yếu
+        500 ERROR_SERVER
+            Nếu phía server có lỗi gì đó
+    Ghi chú:
+        1a. Password đủ mạnh bao gồm ít nhất 10 ký tự, có chữ in hoa, in thường, chữ số và ký tự đặc biệt
+
+2. Đăng nhập:
+    Mô tả:
+        Client đăng nhập tới server để truy cập file của mình, chia sẻ hoặc nhận file của người khác
+        hoặc kết nối tới 1 workspace
+    request:
+        LOGIN <username> <password>
+    response:
+        200 LOGIN_SUCCESS
+            Đăng nhập thành công
+        401 INVALID_CREDENTIALS
+            Sai tên đăng nhập hoặc mật khẩu
+        402 ALREADY_LOGIN
+            Đã có phiên login trước đó, yêu cầu xem lại
+        400 BAD_REQUEST
+            Sai định dạng
+        500 ERROR_SERVER
+            Nếu phía server có lỗi gì đó

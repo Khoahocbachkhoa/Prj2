@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <arpa/inet.h>
+#include <sys/stat.h>
+
+#include "../../include/protocols.h"
+#include "../../include/security.h"
+#include "../../include/transport.h"
+#include "../../include/db_user.h"
+
+void handle_register(int clientfd, const char *req) {
+    char cmd[16];
+    char username[64];
+    char password[64];
+    char res[256];
+    char path[256];
+
+    int ret = sscanf(req, "%s %s %s\r\n", cmd, username, password);
+    if (ret != 3) {
+        snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    // Check password đủ mạnh không
+    ret = check_password(password);
+    if (ret == PASSWORD_WEAK) {
+        snprintf(res, sizeof(res), "422 WEAK_PASSWORD\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    } else if (ret == PASSWORD_ERR) {
+        snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    // Check user có tồn tại chưa
+    ret = db_user_exists(username);
+    if (ret == DB_USER_EXISTS) {
+        snprintf(res, sizeof(res), "409 USER_EXISTS\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    // Tạo user mới
+    ret = db_insert_user(username, password);
+    if (ret == DB_USER_ERROR) {
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    // Tạo thư mục ứng với file repo của user đó
+    snprintf(path, sizeof(path), "./data/%s", username);
+    ret = mkdir(path, 0755);
+    
+    if (ret == -1) {
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    // Tạo user mới và thêm folder lưu trữ thành công
+    snprintf(res, sizeof(res), "200 REGISTER_SUCCESS\r\n");
+    net_send(clientfd, res, strlen(res), 0);
+
+    return;
+}
