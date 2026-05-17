@@ -1,0 +1,24 @@
+1. Đăng ký
+    Ký hiệu:
+        register <username> <password>
+    Mô tả:
+        Đăng ký 1 tài khoản mới khi ở khách
+    
+2. Đăng nhập
+    Ký hiệu:
+        login <username> <password>
+    Mô tả:
+        Đăng nhập 1 tài khoản
+    
+3. Đăng xuất
+    Ký hiệu:
+        logout
+    Mô tả:
+        Đăng xuất 1 tài khoản
+
+4. Thoát
+    Ký hiệu:
+        quit
+    Mô tả:
+        Thoát khỏi chương trình, ngắt kết nối tới server.
+
