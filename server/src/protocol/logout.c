@@ -21,14 +21,14 @@ void handle_logout(int clientfd, const char *req, session_t *session) {
         return;
     }
 
-    if (!session->logged_in) {
+    if (session->logged_in == 0) {
         snprintf(res, sizeof(res), "201 NOT_LOGIN_YET\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
     // set session to zero
-    memset(session, 0, sizeof(&session));
+    memset(session, 0, sizeof(session_t));
     session->logged_in = 0;
     session->user_id = 0;
 

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <ctype.h>
+#include <stdlib.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 
@@ -15,7 +15,13 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     char username[64];
     char password[64];
     char res[256];
-    int *id = malloc(sizeof(int));
+    int *id = (int*)malloc(sizeof(int));
+
+    if (id == NULL) {
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
 
     int ret = sscanf(req, "%s %s %s\r\n", cmd, username, password);
     if (ret != 3) {
@@ -38,11 +44,13 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     } else if (ret == DB_USER_INVALID_CREDENTIALS) {
         snprintf(res, sizeof(res), "401 INVALID_CREDENTIALS\r\n");
         net_send(clientfd, res, strlen(res), 0);
+        return;
     }
 
     // Login oke
     session->logged_in = 1;
-    strncpy(session->username, username, sizeof(username));
+    strncpy(session->username, username, sizeof(session->username) - 1);
+    session->username[sizeof(session->username) - 1] = '\0';
     session->user_id = *id;
 
     if (ret == DB_USER_OK) {

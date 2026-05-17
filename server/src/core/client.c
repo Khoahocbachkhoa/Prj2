@@ -13,6 +13,9 @@ void handle_client(int clientfd) {
     session_t session;
     memset(&session, 0, sizeof(session));
 
+    session.logged_in = 0;
+    session.user_id = -1;
+
     char buf[BUFSIZ];
     char cmd[16];
 
