@@ -29,8 +29,17 @@
         401 INVALID_CREDENTIALS
             Sai tên đăng nhập hoặc mật khẩu
         402 ALREADY_LOGIN
-            Đã có phiên login trước đó, yêu cầu xem lại
+            Đã đăng nhập rồi, đề nghị đăng xuất
         400 BAD_REQUEST
             Sai định dạng
         500 ERROR_SERVER
             Nếu phía server có lỗi gì đó
+
+3. Đăng xuất
+    Mô tả:
+        Client đăng xuất khỏi phiên
+    request:
+        LOGOUT\r\n 
+    response:
+        200 LOGOUT_SUCCESS
+        201 NOT_LOGIN_YET

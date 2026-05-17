@@ -10,6 +10,9 @@
 #include "../../include/database.h"
 
 void handle_client(int clientfd) {
+    session_t session;
+    memset(&session, 0, sizeof(session));
+
     char buf[BUFSIZ];
     char cmd[16];
 
@@ -28,9 +31,9 @@ void handle_client(int clientfd) {
         if (strcmp(cmd, "REGISTER") == 0) {
             handle_register(clientfd, buf);
         } else if (strcmp(cmd, "LOGIN") == 0) {
-            handle_login(clientfd, buf);
-        } else {
-
+            handle_login(clientfd, buf, &session);
+        } else if (strcmp(cmd, "LOGOUT") == 0) {
+            handle_logout(clientfd, buf, &session);
         }
     }
 }
