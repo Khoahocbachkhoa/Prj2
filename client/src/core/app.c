@@ -10,7 +10,7 @@
 #include "../../include/parser.h"
 #include "../../include/command.h"
 
-void init(int argc, char const *argv[]) {
+void init(int argc, char *argv[]) {
     // parse ip and server port from argv
     char ip[32];
     int port = atoi(argv[2]);
