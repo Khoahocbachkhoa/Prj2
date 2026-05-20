@@ -29,6 +29,7 @@ void init() {
 
 void shell_print_prompt() {
     printf("%s %s $ ", state->username, state->currentworkspace);
+    fflush(stdout);
 }
 
 char *shell_read_line() {

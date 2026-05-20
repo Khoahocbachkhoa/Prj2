@@ -6,7 +6,8 @@
 #include "../../include/state.h"
 #include "../../include/app.h"
 
-ClientState *state = NULL;
+ClientState global_state;
+ClientState *state = &global_state;
 
 void init_state(ClientState *state) {
     snprintf(state->username, sizeof(state->username), "guest");
