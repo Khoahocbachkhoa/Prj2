@@ -1,19 +1,36 @@
 CC = gcc
-CFLAGS = -Wall -I./include
 
-SRCS = src/main.c \
-       $(wildcard src/core/*.c) \
-       $(wildcard src/database/*.c) \
-       $(wildcard src/protocol/*.c) \
-       $(wildcard src/services/*.c) \
-       $(wildcard src/transport/*.c)
+CFLAGS = -Wall -Wextra -I./include
 
-TARGET = server.out
+TARGET = client.out
+
+SRC = \
+	src/main.c \
+	src/core/app.c \
+	src/core/state.c \
+	src/parser/parser.c \
+	src/command/dispatch.c \
+	src/command/register.c \
+	src/command/login.c \
+	src/command/logout.c \
+	src/command/exit.c \
+	src/transport/transport.c \
+	src/utils/security.c
+
+OBJ = $(SRC:.c=.o)
 
 all: $(TARGET)
 
-$(TARGET): $(SRCS)
-	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET) $(LIBS)
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(OBJ) $(TARGET)
+
+run: all
+	./$(TARGET)
+
+re: clean all
