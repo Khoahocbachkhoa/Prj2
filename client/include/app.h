@@ -17,7 +17,6 @@ char *shell_read_line();
 void shell_excute(char *line);
 
 // Shutdown app
-void shutdown();
-
+void app_shutdown();
 
 #endif

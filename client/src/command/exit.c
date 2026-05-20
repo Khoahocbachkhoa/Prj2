@@ -8,6 +8,6 @@
 #include "../../include/state.h"
 
 void cmd_exit(ParsedCommand *cmd) {
-    shutdown();
+    app_shutdown();
     exit(EXIT_SUCCESS);
 }
