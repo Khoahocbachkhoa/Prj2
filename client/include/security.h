@@ -1,5 +1,5 @@
 #ifndef SECURITY_H
-#define SECURIT_H
+#define SECURITY_H
 
 #include <unistd.h>
 
