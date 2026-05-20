@@ -72,6 +72,7 @@ DbUserStatus db_insert_user(const char *username, const char *password) {
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
         fprintf(stderr, "Lỗi truy vấn(db_insert_user)!");
         PQclear(res);
+        db_release(conn);
         return DB_USER_ERROR;
     }
 
