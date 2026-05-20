@@ -12,6 +12,5 @@ int main() {
         shell_excute(line);
     }
 
-    shutdown();
     return 0;
 }
