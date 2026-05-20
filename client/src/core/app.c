@@ -64,6 +64,6 @@ void shell_excute(char *line) {
     command_dispatch(&cmd);
 }
 
-void shutdown() {
+void app_shutdown() {
     close(state->sockfd);
 }
