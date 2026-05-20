@@ -1,50 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 
 #include "../../include/app.h"
+#include "../../include/server.h"
 #include "../../include/state.h"
 #include "../../include/parser.h"
 #include "../../include/command.h"
 
-static volatile sig_atomic_t g_interrupted = 0;
+void init(int argc, char const *argv[]) {
+    // parse ip and server port from argv
+    char ip[32];
+    int port = atoi(argv[2]);
 
-// Xử lý khi user bấm Ctrl + C
-static void handle_sigint(int sig) {
-    (void)sig;
+    if (strcmp(argv[1], "localhost") == 0)
+        strcpy(ip, "127.0.0.1");
+    else
+        strcpy(ip, argv[2]);
 
-    g_interrupted = 1;
-
-    write(STDOUT_FILENO, "\n", 1);
-}
-
-void init() {
-    init_state(state);
-    printf("Welcome to client shell!\n Type help to information!\n Type quit to quit\n");
-    signal(SIGINT, handle_sigint); // Xử lý khi người dùng bấm Ctrl + C
+    // connect to server
+    int sockfd = connect_to_server(ip, port);
+    
+    init_state(state, sockfd);
+    printf("Welcome to client shell!\nType help to information!\nType quit to quit\n");
 }
 
 void shell_print_prompt() {
-    printf("%s %s $ ", state->username, state->currentworkspace);
+    printf("%s:%s$ ", state->username, state->currentworkspace);
     fflush(stdout);
 }
 
 char *shell_read_line() {
     static char buf[BUFSIZ];
     memset(buf, 0, sizeof(buf));
-    g_interrupted = 0; 
 
     if (fgets(buf, sizeof(buf), stdin) == NULL) {
-        // Ctrl + C
-        if (g_interrupted) {
-            clearerr(stdin);
-            return NULL;
-        }
-
-        // Ctrl + D
         return NULL;
     } 
 

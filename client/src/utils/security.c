@@ -21,7 +21,6 @@ void read_password(char *buffer, size_t size) {
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
     // prompt
-    printf("Password: ");
     fflush(stdout);
 
     // read password

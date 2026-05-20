@@ -5,7 +5,7 @@
 #define SERVADDR "127.0.0.1"
 
 // Khởi tạo ứng dụng
-void init();
+void init(int argc, char *argv[]);
 
 // Prompt
 void shell_print_prompt();

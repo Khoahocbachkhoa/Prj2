@@ -1,7 +1,7 @@
 #include "../include/app.h"
 
-int main() {
-    init();
+int main(int argc, char const *argv[]) {
+    init(argc, argv);
 
     while (1) {
         shell_print_prompt();

@@ -11,6 +11,7 @@ static Command commands[] =
     {"logout", cmd_logout},
     {"exit",   cmd_exit},
     {"quit",   cmd_exit},
+    {"register", cmd_register}
 };
 
 void command_dispatch(ParsedCommand *cmd) {

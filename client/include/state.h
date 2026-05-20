@@ -14,6 +14,6 @@ typedef struct {
 
 extern ClientState *state;
 
-void init_state(ClientState *state);
+void init_state(ClientState *state, int fd);
 
 #endif
