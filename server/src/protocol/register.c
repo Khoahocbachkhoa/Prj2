@@ -45,7 +45,7 @@ void handle_register(int clientfd, const char *req) {
     }
 
     // Tạo user mới
-    ret = db_insert_user(username, password);
+    ret = db_user_insert(username, password);
     if (ret == DB_USER_ERROR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);

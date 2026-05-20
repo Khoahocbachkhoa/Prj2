@@ -7,7 +7,6 @@
 #include "../../include/client.h"
 #include "../../include/protocols.h"
 #include "../../include/transport.h"
-#include "../../include/database.h"
 
 void handle_client(int clientfd) {
     session_t session;

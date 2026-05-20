@@ -14,9 +14,6 @@ typedef enum {
 DbUserStatus db_user_exists(const char *username);
 
 // Tạo user mới
-DbUserStatus db_insert_user(const char *username, const char *password);
-
-// Kiểm tra tên đăng nhập + mật khẩu
-DbUserStatus db_check_login(const char *username, const char *password, int *id);
+DbUserStatus db_user_insert(const char *username, const char *password);
 
 #endif

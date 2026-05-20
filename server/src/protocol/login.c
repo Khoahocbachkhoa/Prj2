@@ -8,7 +8,7 @@
 #include "../../include/protocols.h"
 #include "../../include/transport.h"
 #include "../../include/client.h"
-#include "../../include/db_user.h"
+#include "../../include/db_auth.h"
 
 void handle_login(int clientfd, const char *req, session_t *session) {
     char cmd[16];
@@ -37,11 +37,11 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     }
 
     ret = db_check_login(username, password, id);
-    if (ret == DB_USER_ERROR) {
+    if (ret == DB_AUTH_ERROR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
-    } else if (ret == DB_USER_INVALID_CREDENTIALS) {
+    } else if (ret == DB_AUTH_INVALID_CREDENTIALS) {
         snprintf(res, sizeof(res), "401 INVALID_CREDENTIALS\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
@@ -53,7 +53,7 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     session->username[sizeof(session->username) - 1] = '\0';
     session->user_id = *id;
 
-    if (ret == DB_USER_OK) {
+    if (ret == DB_AUTH_OK) {
         snprintf(res, sizeof(res), "200 LOGIN_SUCCESS\r\n");
         net_send(clientfd, res, strlen(res), 0);
     }
