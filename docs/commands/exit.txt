@@ -1,0 +1,6 @@
+Tên:
+    exit - Đăng xuất và thoát khỏi chương trình
+Cú pháp:
+    exit
+Mô tả:
+    Đăng xuất và thoát khỏi chương trình.
