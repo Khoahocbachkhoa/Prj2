@@ -7,11 +7,11 @@ int main() {
         shell_print_prompt();
 
         char *line = shell_read_line();
-        if (!line) continue;
+        if (!line || line[0] == '\0') continue;
 
         shell_excute(line);
     }
 
     shutdown();
-    return 1;
+    return 0;
 }

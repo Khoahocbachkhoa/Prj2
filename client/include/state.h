@@ -1,13 +1,19 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include <stdbool.h>
+
 typedef struct {
-    int is_logged_in;
+    bool is_logged_in;
+    
     char username[64];
+    char currentworkspace[64];
+
+    int sockfd;
 } ClientState;
 
-extern ClientState g_state;
+extern ClientState *state;
 
-void init_state();
+void init_state(ClientState *state);
 
 #endif
