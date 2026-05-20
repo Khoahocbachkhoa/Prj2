@@ -3,7 +3,7 @@
 
 #include "parser.h"
 
-typedef int (*CommandHandler)(
+typedef void (*CommandHandler)(
     ParsedCommand *cmd
 );
 

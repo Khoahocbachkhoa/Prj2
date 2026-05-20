@@ -17,7 +17,7 @@ void command_dispatch(ParsedCommand *cmd) {
     size_t cnt = sizeof(commands) / sizeof(commands[0]);
 
     // look up for handler
-    for (int i = 0; i < cnt; ++i) {
+    for (size_t i = 0; i < cnt; ++i) {
         if (strcmp(cmd->argv[0], commands[i].name) == 0) {
             // Gọi handler
             commands[i].handler(cmd);
