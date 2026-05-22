@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#include "../include/app.h"
-#include "../include/env.h"
-#include "../include/database.h"
-#include "../include/db_pool.h"
-#include "../include/server.h"
+#include "../../include/app.h"
+#include "../../include/env.h"
+#include "../../include/database.h"
+#include "../../include/db_pool.h"
+#include "../../include/server.h"
 
 #define PORT 8080
 

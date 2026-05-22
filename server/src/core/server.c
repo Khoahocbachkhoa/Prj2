@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <arpa/inet.h>
 
 #include "../../include/server.h"
 #include "../../include/client.h"
-#include "../../include/database.h"
 
 #define LISTENQ 100
 

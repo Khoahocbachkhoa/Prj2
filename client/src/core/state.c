@@ -1,11 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <arpa/inet.h>
 
 #include "../../include/state.h"
-#include "../../include/app.h"
-#include "../../include/server.h"
 
 ClientState global_state;
 ClientState *state = &global_state;

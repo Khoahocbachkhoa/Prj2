@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <ctype.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 
 #include "../../include/protocols.h"
 #include "../../include/transport.h"
 #include "../../include/client.h"
-#include "../../include/db_user.h"
 
 void handle_logout(int clientfd, const char *req, session_t *session) {
     char cmd[16];
