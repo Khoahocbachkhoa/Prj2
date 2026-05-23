@@ -8,13 +8,13 @@
 #include "../../include/security.h"
 #include "../../include/transport.h"
 #include "../../include/db_user.h"
+#include "../../include/db_folder.h"
 
 void handle_register(int clientfd, const char *req) {
     char cmd[16];
     char username[64];
     char password[64];
     char res[256];
-    char path[256];
 
     int ret = sscanf(req, "%s %s %s\r\n", cmd, username, password);
     if (ret != 3) {
@@ -62,7 +62,14 @@ void handle_register(int clientfd, const char *req) {
     // }
 
     //? Sửa: Triển khai virtual file system
-    
+
+    // tạo thư mục root cho user vừa tạo
+    ret = db_folder_create_root(username);
+    if (ret == 1) {
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
 
     // Tạo user mới và thêm folder lưu trữ thành công
     snprintf(res, sizeof(res), "200 REGISTER_SUCCESS\r\n");
