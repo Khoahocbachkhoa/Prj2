@@ -12,6 +12,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
+	rm -f $(OBJ)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

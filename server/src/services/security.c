@@ -1,11 +1,12 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "../../include/database.h"
 #include "../../include/security.h"
 
-PasswordStrength check_password(const char *pass) {
+db_errror_code check_password(const char *pass) {
     if (pass == NULL) {
-        return PASSWORD_ERR;
+        return DB_AUTH_INVALID_ARGUMENT;
     }
 
     int has_upper = 0;

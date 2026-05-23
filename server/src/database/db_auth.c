@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../../include/database.h"
 #include "../../include/db_pool.h"
 #include "../../include/db_auth.h"
 
 // Kiểm tra thông tin đăng nhập
-DbAuthStatus db_check_login(const char *username, const char *password, int *id) {
+db_errror_code db_check_login(const char *username, const char *password, int *id) {
     if (username == NULL || password == NULL) {
         return DB_AUTH_INVALID_CREDENTIALS;
     }
@@ -13,7 +14,7 @@ DbAuthStatus db_check_login(const char *username, const char *password, int *id)
     PGconn *conn = db_acquire();
     if (conn == NULL) {
         fprintf(stderr, "db_user_exists: pool exhausted\n");
-        return DB_AUTH_ERROR;
+        return ERR;
     }
 
     const char *query = "select id from users where username = $1 and password = $2;";
@@ -26,7 +27,7 @@ DbAuthStatus db_check_login(const char *username, const char *password, int *id)
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         PQclear(res);
         db_release(conn);
-        return DB_AUTH_ERROR;
+        return ERR;
     }
 
     // Không tìm thấy username có password
@@ -44,5 +45,5 @@ DbAuthStatus db_check_login(const char *username, const char *password, int *id)
     PQclear(res);
     db_release(conn);
 
-    return DB_AUTH_OK;
+    return OK;
 }

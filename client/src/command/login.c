@@ -49,7 +49,7 @@ void cmd_login(ParsedCommand *cmd) {
         printf("Login success!\n");
         state->is_logged_in = true;
         strcpy(state->username, username);
-        strcpy(state->currentworkspace, "~");
+        strcpy(state->currentworkspace, "/");
     } else if (code == 401) {
         printf("Error: wrong username or password. Please try again!\n");
     } else if (code == 402) {

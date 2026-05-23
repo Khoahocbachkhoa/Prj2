@@ -4,19 +4,20 @@
 #include "../../include/db_pool.h"
 #include "../../include/db_folder.h"
 #include "../../include/db_user.h"
+#include "../../include/database.h"
 
-int db_folder_create_root(char *username) {
+db_errror_code db_folder_create_root(char *username) {
     int id;
     char id_str[32];
     // Tìm kiếm id của user có username
     int ret = db_user_find_id_by_username(username, &id);
 
-    if (ret == DB_USER_ERROR) {
+    if (ret == ERR) {
         fprintf(stderr, "create root folder error!\n");
-        return 1;
+        return ERR;
     } else if (ret == DB_USER_NOT_FOUND) {
         fprintf(stderr, "create root folder: username not found!\n");
-        return 1;
+        return ERR;
     }
 
     // tạo thư mục gốc cho user có id
@@ -24,7 +25,7 @@ int db_folder_create_root(char *username) {
 
     if (conn == NULL) {
         fprintf(stderr, "create root folder: pool exhausted\n");
-        return 1;
+        return ERR;
     }
 
     const char *query = 
@@ -43,11 +44,11 @@ int db_folder_create_root(char *username) {
 
         PQclear(res);
         db_release(conn);
-        return 1;
+        return ERR;
     }
 
     PQclear(res);
     db_release(conn);
 
-    return 0;
+    return OK;
 }

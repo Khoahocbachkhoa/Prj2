@@ -9,6 +9,7 @@
 #include "../../include/transport.h"
 #include "../../include/db_user.h"
 #include "../../include/db_folder.h"
+#include "../../include/database.h"
 
 void handle_register(int clientfd, const char *req) {
     char cmd[16];
@@ -29,7 +30,7 @@ void handle_register(int clientfd, const char *req) {
         snprintf(res, sizeof(res), "422 WEAK_PASSWORD\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
-    } else if (ret == PASSWORD_ERR) {
+    } else if (ret == ERR) {
         snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
@@ -45,7 +46,7 @@ void handle_register(int clientfd, const char *req) {
 
     // Tạo user mới
     ret = db_user_insert(username, password);
-    if (ret == DB_USER_ERROR) {
+    if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
@@ -53,7 +54,7 @@ void handle_register(int clientfd, const char *req) {
 
     // tạo thư mục root cho user vừa tạo
     ret = db_folder_create_root(username);
-    if (ret == 1) {
+    if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;

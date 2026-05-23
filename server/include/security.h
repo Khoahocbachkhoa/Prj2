@@ -1,13 +1,9 @@
 #ifndef SECURITY_H
 #define SECURITY_H
 
-typedef enum {
-    PASSWORD_WEAK = 0,
-    PASSWORD_STRONG = 1,
-    PASSWORD_ERR = 2
-} PasswordStrength;
+#include "database.h"
 
 // Kiểm tra độ mạnh của một mật khẩu
-PasswordStrength check_password(const char *pass);
+db_errror_code check_password(const char *pass);
 
 #endif

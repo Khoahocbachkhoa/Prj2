@@ -37,7 +37,7 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     }
 
     ret = db_check_login(username, password, id);
-    if (ret == DB_AUTH_ERROR) {
+    if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
@@ -53,7 +53,7 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     session->username[sizeof(session->username) - 1] = '\0';
     session->user_id = *id;
 
-    if (ret == DB_AUTH_OK) {
+    if (ret == OK) {
         snprintf(res, sizeof(res), "200 LOGIN_SUCCESS\r\n");
         net_send(clientfd, res, strlen(res), 0);
     }

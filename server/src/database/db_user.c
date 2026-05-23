@@ -1,18 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../../include/database.h"
 #include "../../include/db_pool.h"
 #include "../../include/db_user.h"
 
 // Kiểm tra sự tồn tại của user cũ
-DbUserStatus db_user_exists(const char *username) {
+db_errror_code db_user_exists(const char *username) {
     if (username == NULL)
         return DB_USER_INVALID_ARGUMENT;
 
     PGconn *conn = db_acquire();
     if (conn == NULL) {
         fprintf(stderr, "db_user_exists: pool exhausted\n");
-        return DB_USER_ERROR;
+        return ERR;
     }
 
     const char *query = "select count(*) from users where username = $1;";
@@ -26,7 +27,7 @@ DbUserStatus db_user_exists(const char *username) {
         fprintf(stderr, "query errror!");
         PQclear(res);
         db_release(conn);
-        return DB_USER_ERROR;
+        return ERR;
     }
 
     // Lấy kết quả trả về
@@ -40,7 +41,7 @@ DbUserStatus db_user_exists(const char *username) {
 }
 
 // Thêm một user mới
-DbUserStatus db_user_insert(const char *username, const char *password) {
+db_errror_code db_user_insert(const char *username, const char *password) {
     if (username == NULL || password == NULL) {
         return DB_USER_INVALID_ARGUMENT;
     }
@@ -48,7 +49,7 @@ DbUserStatus db_user_insert(const char *username, const char *password) {
     PGconn *conn = db_acquire();
     if (conn == NULL) {
         fprintf(stderr, "db_user_exists: pool exhausted\n");
-        return DB_USER_ERROR;
+        return ERR;
     }
 
     const char *query = "insert into users(username, password) "
@@ -64,22 +65,23 @@ DbUserStatus db_user_insert(const char *username, const char *password) {
         fprintf(stderr, "Lỗi truy vấn(db_insert_user)!");
         PQclear(res);
         db_release(conn);
-        return DB_USER_ERROR;
+        return ERR;
     }
 
     PQclear(res);
-    return DB_USER_OK;
+    db_release(conn);
+    return OK;
 }
 
 // Trả về ID của một username
-DbUserStatus db_user_find_id_by_username(const char *username, int *id) {
+db_errror_code db_user_find_id_by_username(const char *username, int *id) {
     if (username == NULL || id == NULL)
         return DB_USER_INVALID_ARGUMENT;
 
     PGconn *conn = db_acquire();
     if (conn == NULL) {
         fprintf(stderr, "db_user_find_id_buy_username: pool exhausted\n");
-        return DB_USER_ERROR;
+        return ERR;
     }
 
     const char *query = "select id from users where username = $1;";
@@ -92,7 +94,7 @@ DbUserStatus db_user_find_id_by_username(const char *username, int *id) {
         fprintf(stderr, "query errror!");
         PQclear(res);
         db_release(conn);
-        return DB_USER_ERROR;
+        return ERR;
     }
 
     // Nếu không tìm thấy user
@@ -109,5 +111,5 @@ DbUserStatus db_user_find_id_by_username(const char *username, int *id) {
     PQclear(res);
     db_release(conn);
 
-    return DB_USER_OK;
+    return OK;
 }
