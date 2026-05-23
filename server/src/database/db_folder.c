@@ -29,8 +29,8 @@ int db_folder_create_root(char *username) {
 
     const char *query = 
         "INSERT INTO folders "
-        "(owner_id, parent_id, name, created_by, is_root) "
-        "VALUES ($1, NULL, '/', $1, TRUE);";
+        "(owner_id, parent_id, name) "
+        "VALUES ($1, NULL, '/');";
 
     const char *params[1];
     snprintf(id_str, sizeof(id_str), "%d", id);
