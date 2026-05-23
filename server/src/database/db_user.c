@@ -70,3 +70,44 @@ DbUserStatus db_user_insert(const char *username, const char *password) {
     PQclear(res);
     return DB_USER_OK;
 }
+
+// Trả về ID của một username
+DbUserStatus db_user_find_id_by_username(const char *username, int *id) {
+    if (username == NULL || id == NULL)
+        return DB_USER_INVALID_ARGUMENT;
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        fprintf(stderr, "db_user_find_id_buy_username: pool exhausted\n");
+        return DB_USER_ERROR;
+    }
+
+    const char *query = "select id from users where username = $1;";
+    const char *params[1];
+    params[0] = username;
+
+    PGresult *res = PQexecParams(conn, query, 1, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr, "query errror!");
+        PQclear(res);
+        db_release(conn);
+        return DB_USER_ERROR;
+    }
+
+    // Nếu không tìm thấy user
+    if (PQntuples(res) == 0) {
+        PQclear(res);
+        db_release(conn);
+
+        return DB_USER_NOT_FOUND;
+    }
+
+    // Lấy id
+    *id = atoi(PQgetvalue(res, 0, 0));
+
+    PQclear(res);
+    db_release(conn);
+
+    return DB_USER_OK;
+}

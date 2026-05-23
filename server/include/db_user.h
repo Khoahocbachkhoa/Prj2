@@ -16,4 +16,7 @@ DbUserStatus db_user_exists(const char *username);
 // Tạo user mới
 DbUserStatus db_user_insert(const char *username, const char *password);
 
+// Trả về id của 1 username
+DbUserStatus db_user_find_id_by_username(const char *username, int *id);
+
 #endif

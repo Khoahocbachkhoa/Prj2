@@ -29,7 +29,9 @@ create table folders (
     deleted_at TIMESTAMP,
 
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    updated_at TIMESTAMP DEFAULT NOW(),
+
+    is_root BOOLEAN DEFAULT FALSE
 );
 
 -- Tệp tin
@@ -158,3 +160,9 @@ ON audit_logs(
     resource_type,
     resource_id
 );
+
+-- Thêm unique
+
+CREATE UNIQUE INDEX unique_root_folder
+ON folders(owner_id)
+WHERE parent_id IS NULL;

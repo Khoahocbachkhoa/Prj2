@@ -62,6 +62,7 @@ void handle_register(int clientfd, const char *req) {
     // }
 
     //? Sửa: Triển khai virtual file system
+    
 
     // Tạo user mới và thêm folder lưu trữ thành công
     snprintf(res, sizeof(res), "200 REGISTER_SUCCESS\r\n");
