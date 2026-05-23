@@ -52,14 +52,16 @@ void handle_register(int clientfd, const char *req) {
     }
 
     // Tạo thư mục ứng với file repo của user đó
-    snprintf(path, sizeof(path), "./data/%s", username);
-    ret = mkdir(path, 0755);
+    //snprintf(path, sizeof(path), "./data/%s", username);
+    // ret = mkdir(path, 0755);
     
-    if (ret == -1) {
-        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
-        net_send(clientfd, res, strlen(res), 0);
-        return;
-    }
+    // if (ret == -1) {
+    //     snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+    //     net_send(clientfd, res, strlen(res), 0);
+    //     return;
+    // }
+
+    //? Sửa: Triển khai virtual file system
 
     // Tạo user mới và thêm folder lưu trữ thành công
     snprintf(res, sizeof(res), "200 REGISTER_SUCCESS\r\n");
