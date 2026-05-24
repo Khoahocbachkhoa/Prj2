@@ -41,7 +41,7 @@ void handle_client(int clientfd) {
         } else if (strcmp(cmd, "LIST") == 0) {
             handle_list(clientfd, buf, &session);
         } else if (strcmp(cmd, "CD") == 0) {
-
+            handle_cd(clientfd, buf, &session); 
         }
     }
 }

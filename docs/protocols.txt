@@ -64,11 +64,16 @@
     response:
         200 LIST_BEGIN
             <... contents ...>
-        200 LIST_END
+        200 LIST_END\r\n
             Trả về nội dung có trong thư mục
         401 NOT_LOGIN_YET
             Nếu người dùng chưa đăng nhập
+        402 FOLDER_DELETED
+            Nếu folder đã được đánh dấu là xóa
+        404 FOLDER_NOT_FOUND
+            Nếu server không tìm thấy folder hiện tại
         500 ERROR_SERVER
+    Ghi chú: Chỉ hỗ trợ hiển thị thư mục hiện tại, chưa hỗ trợ hiển thị path cụ thể
 
 6. Điều hướng
     request:
@@ -84,6 +89,7 @@
             Không có path hoặc path không hợp lệ
         409 NOT_A_DIRECTORY
         500 ERROR_SERVER
+    Ghi chú: Chỉ hỗ trợ hiển thị điều hướng trong thư mục hiện tại tới 1 con hoặc .., chưa hỗ trợ điều hướng tới path cụ thể
 
 7. Tạo thư mục mới
     request:
