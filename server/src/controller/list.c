@@ -57,6 +57,8 @@ void handle_list(int clientfd, const char *req, session_t *session) {
     for (size_t i = 0; i < maxlen; ++i) {
         snprintf(line, sizeof(line), "File %s\t%s\t%s", 
                 entries[i].name, entries[i].owner, entries[i].updated_at);
+        
+        net_send(clientfd, line, strlen(line), 0);
     }
 
     // Gửi các folders
@@ -71,6 +73,8 @@ void handle_list(int clientfd, const char *req, session_t *session) {
     for (size_t i = 0; i < maxlen; ++i) {
         snprintf(line, sizeof(line), "Folder %s\t%s\t%s", 
                 entries[i].name, entries[i].owner, entries[i].updated_at);
+
+        net_send(clientfd, line, strlen(line), 0);
     }
 
     // Gửi 200 LIST_END báo hiệu kết thúc
