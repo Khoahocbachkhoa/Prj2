@@ -13,6 +13,7 @@ void handle_client(int clientfd) {
 
     session.logged_in = 0;
     session.user_id = -1;
+    session.current_folder_id = -1;
 
     char buf[BUFSIZ];
     char cmd[16];
@@ -35,6 +36,8 @@ void handle_client(int clientfd) {
             handle_login(clientfd, buf, &session);
         } else if (strcmp(cmd, "LOGOUT") == 0) {
             handle_logout(clientfd, buf, &session);
+        } else if (strcmp(cmd, "LIST") == 0) {
+            
         }
     }
 }

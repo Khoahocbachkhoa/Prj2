@@ -3,12 +3,9 @@ CFLAGS = -Wall -I./include
 
 LIBS = -lpq
 
-SRCS = src/main.c \
-       $(wildcard src/core/*.c) \
-       $(wildcard src/database/*.c) \
-       $(wildcard src/protocol/*.c) \
-       $(wildcard src/services/*.c) \
-       $(wildcard src/transport/*.c)
+SRCS = $(shell find src -name "*.c") 
+
+OBJ = $(SRCS:.c=.o)
 
 TARGET = server.out
 
@@ -18,4 +15,4 @@ $(TARGET): $(SRCS)
 	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET) $(LIBS)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(OBJ) $(TARGET)

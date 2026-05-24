@@ -52,3 +52,44 @@ db_errror_code db_folder_create_root(char *username) {
 
     return OK;
 }
+
+db_errror_code db_folder_find_root(int user_id, int *root_id) {
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL) {
+        fprintf(stderr, "find root folder: pool exhausted\n");
+        return ERR;
+    }
+
+    const char *query = "select id from folders where owner_id = $1 and parent_id is NULL;";
+    const char *params[1];
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", user_id);
+    params[0] = id_str;
+
+    PGresult *res = PQexecParams(conn, query, 1, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr, "Fint root folder error: %s\n", PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    if (PQntuples(res) == 0) {
+        fprintf(stderr, "Find roor folder: user_id not found!\n");
+        PQclear(res);
+        db_release(conn);
+
+        return DB_USER_NOT_FOUND;
+    }
+
+    // Lay root folder id
+    *root_id = atoi(PQgetvalue(conn, 0, 0));
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

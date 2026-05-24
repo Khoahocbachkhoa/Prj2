@@ -9,6 +9,7 @@
 #include "../../include/transport.h"
 #include "../../include/client.h"
 #include "../../include/db_auth.h"
+#include "../../include/db_folder.h"
 
 void handle_login(int clientfd, const char *req, session_t *session) {
     char cmd[16];
@@ -52,9 +53,21 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     strncpy(session->username, username, sizeof(session->username) - 1);
     session->username[sizeof(session->username) - 1] = '\0';
     session->user_id = *id;
+    strcpy(session->cwd , "/");
+
+    // Thiết lập thư mục ban đầu khi login là /
+    int ret = db_folder_find_root(session->user_id, &session->current_folder_id);
+    
+    if (ret == ERR || ret == DB_USER_NOT_FOUND) {
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
 
     if (ret == OK) {
         snprintf(res, sizeof(res), "200 LOGIN_SUCCESS\r\n");
         net_send(clientfd, res, strlen(res), 0);
     }
+
+    free(id);
 }
