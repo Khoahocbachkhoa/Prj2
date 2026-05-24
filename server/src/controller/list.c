@@ -10,7 +10,15 @@
 
 void handle_list(int clientfd, const char *req, session_t *session) {
     char res[256];
-    char entry[256];
+    char tmp[256];
+    char cmd[16];
+
+    int ret = sscanf(req, "%s %s\r\n", cmd, tmp);
+    if (ret != 1) {
+        snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
 
     if (session->logged_in == 0) {
         snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
@@ -19,7 +27,7 @@ void handle_list(int clientfd, const char *req, session_t *session) {
     }
 
     // Kiểm tra trạng thái của thư mục đó
-    int ret = db_folder_check_status(session->current_folder_id);
+    ret = db_folder_check_status(session->current_folder_id);
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 SERV_ERROR\r\n");
         net_send(clientfd, res, strlen(res), 0);
@@ -45,8 +53,8 @@ void handle_list(int clientfd, const char *req, session_t *session) {
         return;
     }
 
-    char line[256];
-    for (int i = 0; i < maxlen; ++i) {
+    char line[512];
+    for (size_t i = 0; i < maxlen; ++i) {
         snprintf(line, sizeof(line), "File %s\t%s\t%s", 
                 entries[i].name, entries[i].owner, entries[i].updated_at);
     }
@@ -60,7 +68,7 @@ void handle_list(int clientfd, const char *req, session_t *session) {
         return;
     }
 
-    for (int i = 0; i < maxlen; ++i) {
+    for (size_t i = 0; i < maxlen; ++i) {
         snprintf(line, sizeof(line), "Folder %s\t%s\t%s", 
                 entries[i].name, entries[i].owner, entries[i].updated_at);
     }

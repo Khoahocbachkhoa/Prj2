@@ -44,7 +44,7 @@ db_errror_code db_file_list(int folder_id, Entry *entries, size_t *maxlen) {
     }
 
     int rows = PQntuples(res);
-    if (rows < *maxlen) rows = *maxlen;
+    if ((size_t)rows < *maxlen) rows = *maxlen;
 
     for (int i = 0; i < rows; ++i) {
         entries[i].type = ENTRY_FILE;
@@ -58,7 +58,7 @@ db_errror_code db_file_list(int folder_id, Entry *entries, size_t *maxlen) {
         snprintf(entries[i].updated_at, sizeof(entries[i].updated_at), "%s", PQgetvalue(res, i, 3));
     }
 
-    *maxlen = rows;
+    *maxlen = (size_t)rows;
     PQclear(res);
     db_release(conn);
 
