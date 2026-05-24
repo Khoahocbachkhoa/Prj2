@@ -15,4 +15,13 @@ void handle_logout(int clientfd, const char *req, session_t *session);
 // Xử lý pwd
 void handle_pwd(int clientfd, const char *req, session_t *session);
 
+// Xử lý list
+void handle_list(int clientfd, const char *req, session_t *session);
+
+// Xử lý cd
+void handle_cd(int clientfd, const char *req, session_t *session);
+
+// Xử lý mkdir
+void handle_mkdir(int clientfd, const char *req, session_t* session);
+
 #endif
