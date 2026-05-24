@@ -8,7 +8,7 @@
 
 void handle_pwd(int clientfd, const char *req, session_t *session) {
     char cmd[16];
-    char res[256];
+    char res[512];
     char temp[256];
 
     int ret = sscanf(req, "%s %s\r\n", cmd, temp);

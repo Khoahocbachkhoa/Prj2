@@ -56,7 +56,7 @@ void handle_login(int clientfd, const char *req, session_t *session) {
     strcpy(session->cwd , "/");
 
     // Thiết lập thư mục ban đầu khi login là /
-    int ret = db_folder_find_root(session->user_id, &session->current_folder_id);
+    ret = db_folder_find_root(session->user_id, &session->current_folder_id);
     
     if (ret == ERR || ret == DB_USER_NOT_FOUND) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");

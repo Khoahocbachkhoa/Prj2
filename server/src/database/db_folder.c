@@ -53,7 +53,7 @@ db_errror_code db_folder_create_root(char *username) {
     return OK;
 }
 
-db_errror_code db_folder_find_root(int user_id, int *root_id) {
+db_errror_code db_folder_find_root(int user_id, long *root_id) {
     PGconn *conn = db_acquire();
 
     if (conn == NULL) {
@@ -86,7 +86,7 @@ db_errror_code db_folder_find_root(int user_id, int *root_id) {
     }
 
     // Lay root folder id
-    *root_id = atoi(PQgetvalue(conn, 0, 0));
+    *root_id = atoi(PQgetvalue(res, 0, 0));
 
     PQclear(res);
     db_release(conn);

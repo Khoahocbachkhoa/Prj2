@@ -1,18 +1,20 @@
 CC = gcc
-CFLAGS = -Wall -I./include
 
-LIBS = -lpq
+CFLAGS = -Wall -Wextra -g -I./include
 
-SRCS = $(shell find src -name "*.c") 
-
-OBJ = $(SRCS:.c=.o)
+SRC = $(shell find src -name "*.c")
 
 TARGET = server.out
 
-all: $(TARGET)
+all:
+	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) -lpq
 
-$(TARGET): $(SRCS)
-	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET) $(LIBS)
+run: all
+	./$(TARGET)
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(TARGET)
+
+re: clean all
+
+.PHONY: all run clean re
