@@ -176,7 +176,7 @@ db_errror_code db_folder_list(int folder_id, Entry *entries, size_t *maxlen) {
     }
 
     int rows = PQntuples(res);
-    if (rows < *maxlen) rows = *maxlen;
+    if ((size_t)rows < *maxlen) rows = *maxlen;
 
     for (int i = 0; i < rows; ++i) {
         entries[i].type = ENTRY_FOLDER;
