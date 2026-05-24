@@ -39,11 +39,15 @@ void handle_list(int clientfd, const char *req, session_t *session) {
     }
 
     // Bắt đầu gửi nội dung
-    snprintf(res, sizeof(res), "200 LIST_BEGIN\r\n\r\n");
+    snprintf(res, sizeof(res), "200 LIST_BEGIN\r\n");
     net_send(clientfd, res, strlen(res), 0);
 
     size_t maxlen = MAXENTRYSIZE;
     Entry entries[MAXENTRYSIZE];
+    char line[512];
+
+    snprintf(line, sizeof(line), "\n");
+    net_send(clientfd, line, strlen(line), 0);
     
     // Gửi các files
     ret = db_file_list(session->current_folder_id, entries, &maxlen);
@@ -53,9 +57,8 @@ void handle_list(int clientfd, const char *req, session_t *session) {
         return;
     }
 
-    char line[512];
     for (size_t i = 0; i < maxlen; ++i) {
-        snprintf(line, sizeof(line), "File %s\t%s\t%s", 
+        snprintf(line, sizeof(line), "File\t%s\t%s\t%s\n", 
                 entries[i].name, entries[i].owner, entries[i].updated_at);
         
         net_send(clientfd, line, strlen(line), 0);
@@ -71,7 +74,7 @@ void handle_list(int clientfd, const char *req, session_t *session) {
     }
 
     for (size_t i = 0; i < maxlen; ++i) {
-        snprintf(line, sizeof(line), "Folder %s\t%s\t%s", 
+        snprintf(line, sizeof(line), "Folder\t%s\t%s\t%s\n", 
                 entries[i].name, entries[i].owner, entries[i].updated_at);
 
         net_send(clientfd, line, strlen(line), 0);
