@@ -1,0 +1,129 @@
+Đăng ký và xác thực:
+
+1. Đăng ký người dùng:
+    Mô tả: 
+        Client gửi yêu cầu đăng ký kèm tài khoản + mật khẩu tới server.
+    request:
+        REGISTER <username> <password>
+    response:
+        200 REGISTER_SUCCESS
+            Đăng ký thành công
+        409 USER_EXISTS
+            Tên đăng nhập đã tồn tại
+        400 BAD_REQUEST 
+            Sai định dạng
+        422 WEAK_PASSWORD
+            Mật khẩu quá yếu
+        500 ERROR_SERVER
+            Nếu phía server có lỗi gì đó
+    Ghi chú:
+        1a. Password đủ mạnh bao gồm ít nhất 10 ký tự, có chữ in hoa, in thường, chữ số và ký tự đặc biệt
+
+2. Đăng nhập:
+    Mô tả:
+        Client đăng nhập tới server để truy cập file của mình, chia sẻ hoặc nhận file của người khác
+        hoặc kết nối tới 1 workspace
+    request:
+        LOGIN <username> <password>
+    response:
+        200 LOGIN_SUCCESS
+            Đăng nhập thành công
+        401 INVALID_CREDENTIALS
+            Sai tên đăng nhập hoặc mật khẩu
+        402 ALREADY_LOGIN
+            Đã đăng nhập rồi, đề nghị đăng xuất
+        400 BAD_REQUEST
+            Sai định dạng
+        500 ERROR_SERVER
+            Nếu phía server có lỗi gì đó
+
+3. Đăng xuất
+    Mô tả:
+        Client đăng xuất khỏi phiên
+    request:
+        LOGOUT
+    response:
+        200 LOGOUT_SUCCESS
+        201 NOT_LOGIN_YET
+
+Điều hướng và thao tác:
+
+4. In ra thư mục làm việc
+    request:
+        PWD
+    response:
+        200 PATH
+            Trả về mã 200 Oke và tên thư mục hiện tại
+        401 NOT_LOGIN_YET
+            Nếu người dùng chưa đăng nhập
+        500 ERROR_SERVER
+
+5. Liệt kê nội dung thư mục
+    request:
+        LIST
+    response:
+        200 LIST_BEGIN
+            <... contents ...>
+        200 LIST_END\r\n
+            Trả về nội dung có trong thư mục
+        401 NOT_LOGIN_YET
+            Nếu người dùng chưa đăng nhập
+        402 FOLDER_DELETED
+            Nếu folder đã được đánh dấu là xóa
+        404 FOLDER_NOT_FOUND
+            Nếu server không tìm thấy folder hiện tại
+        500 ERROR_SERVER
+    Ghi chú: Chỉ hỗ trợ hiển thị thư mục hiện tại, chưa hỗ trợ hiển thị path cụ thể
+
+6. Điều hướng
+    request:
+        CD path
+    response:
+        200 CHANGE_DIRECTORY_SUCCESS
+            Điều hướng thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền truy cập
+        422 INVALID_PATH
+            Không có path hoặc path không hợp lệ
+        409 NOT_A_DIRECTORY
+        500 ERROR_SERVER
+    Ghi chú: Chỉ hỗ trợ hiển thị điều hướng trong thư mục hiện tại tới 1 con hoặc .., chưa hỗ trợ điều hướng tới path cụ thể
+
+7. Tạo thư mục mới
+    request:
+        MKDIR new_folder
+    response:
+        200 MKDIR_SUCCESS
+            Thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền tạo thư mục
+        409 FOLDER_ALREADY_EXISTS
+            Tạo một thư mục trùng tên thư mục đã tồn tại
+        422 INVALID_FOLDER_NAME
+            Tên thư mục không hợp lệ
+        500 ERROR_SERVER
+
+8. Xóa 1 file hoặc 1 thư mục
+    request:
+        DELETE path_or_file_name
+    reponse:
+        200 DELETE_SUCCESS
+            Thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền
+        404 RESOURCE_NOT_FOUND
+            Không tồn tại tài nguyên
+        409 DIRECTORY_NOT_EMPTY
+            Không được xóa 1 thư mục không rỗng
+        500 ERROR_SERVER
+
+9. Đổi tên
+
+Truyền tải:
+    

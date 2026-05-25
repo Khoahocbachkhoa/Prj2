@@ -196,3 +196,114 @@ db_errror_code db_folder_list(int folder_id, Entry *entries, size_t *maxlen) {
 
     return OK;
 }
+
+// Tìm folder cha
+db_errror_code db_folder_find_parent(int folder_id, int *id) {
+    if (id == NULL) {
+        return ERR_INVALID_ARGUMENT;
+    }
+
+    // Kiểm tra trạng thái hiện tại của folder
+    int ret = db_folder_check_status(folder_id);
+    if (ret != OK) {
+        return ret;
+    }
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query = "select parent_id from folders where id = $1";
+    
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", folder_id);
+
+    const char *param[1];
+    param[0] = id_str;
+
+    PGresult *res = PQexecParams(conn, query, 1, NULL, param, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr, "find parent error: %s\n", PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    // Nếu là root folder
+    if (PQgetisnull(res, 0, 0)) {
+        // Khong thay doi id folder
+        *id = folder_id;
+
+        PQclear(res);
+        db_release(conn);
+
+        return OK;
+    }
+
+    // Lấy parent_id
+    *id = atoi(PQgetvalue(res, 0, 0));
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}
+
+// Tìm folder có tên
+db_errror_code db_folder_find_folder_by_name(int folder_id, char *dirname, int *id) {
+    if (dirname == NULL || id == NULL) {
+        return ERR_INVALID_ARGUMENT;
+    }
+
+    // Kiểm tra trạng thái hiện tại của folder
+    int ret = db_folder_check_status(folder_id);
+    if (ret != OK) {
+        return ret;
+    }
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query = "select id from folders " 
+        "where parent_id = $1 and name = $2 "
+        "and deleted_at is not null";
+    
+    char id_str[32]; snprintf(id_str, sizeof(id_str), "%d", folder_id);
+
+    const char *param[2];
+    param[0] = id_str;
+    param[1] = dirname;
+
+    PGresult *res = PQexecParams(conn, query, 2, NULL, param, NULL, NULL, 0);
+    if (PQresultStatus(res) != PGRES_TUPLES_OK)  {
+        fprintf(stderr, "Error: find folder by name: %s\n", PQerrorMessage(conn));
+        
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    // Không tìm thấy folder với tên đó
+    if (PQntuples(res) == 0) {
+
+        PQclear(res);
+        db_release(conn);
+
+        return DB_FOLDER_NAME_NOT_FOUND;
+    }
+
+    // Lấy id folder
+    *id = atoi(PQgetvalue(res, 0, 0));
+    
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

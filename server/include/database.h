@@ -45,7 +45,8 @@ typedef enum {
     // folder
     DB_FOLDER_DELETED,
     DB_FOLDER_MOVED,
-    DB_FOLDER_NOT_FOUND
+    DB_FOLDER_NOT_FOUND,
+    DB_FOLDER_NAME_NOT_FOUND
 } db_errror_code;
 
 extern const char *g_db_conninfo;

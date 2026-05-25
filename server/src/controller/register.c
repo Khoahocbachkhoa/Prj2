@@ -30,7 +30,7 @@ void handle_register(int clientfd, const char *req) {
         snprintf(res, sizeof(res), "422 WEAK_PASSWORD\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
-    } else if (ret == ERR) {
+    } else if (ret == PASSWORD_INVALID_ARGUMENT) {
         snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
