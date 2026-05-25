@@ -38,10 +38,6 @@ typedef enum {
     DB_AUTH_INVALID_ARGUMENT,
     DB_AUTH_INVALID_CREDENTIALS,
 
-    // security
-    PASSWORD_WEAK,
-    PASSWORD_STRONG,
-
     // folder
     DB_FOLDER_DELETED,
     DB_FOLDER_MOVED,

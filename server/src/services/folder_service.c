@@ -37,3 +37,26 @@ void folder_service_change_dir(session_t *session, const char *dir) {
         }
     }
 }
+
+
+// Kiểm tra tính hợp lệ của một folder name
+bool folder_service_check_fname(char *name) {
+    if (name == NULL || *name == '\0')
+        return false;
+
+    // chặn "." và ".."
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+        return false;
+
+    for (char *p = name; *p; ++p) {
+        // không cho separator
+        if (*p == '/' || *p == '\\')
+            return false;
+
+        // không cho ký tự control
+        if (iscntrl((unsigned char)*p))
+            return false;
+    }
+
+    return true;
+}

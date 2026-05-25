@@ -9,7 +9,8 @@
 #include "../../include/db_files.h"
 #include "../../include/folder_service.h"
 
-void handle_cd(int clientfd, const char *req, session_t *session) {
+// Chỉ hỗ trợ duy nhất tạo 1 dir với một lệnh
+void handle_mkdir(int clientfd, const char *req, session_t* session) {
     char res[256];
     char dir[256];
     char cmd[16];
@@ -28,32 +29,34 @@ void handle_cd(int clientfd, const char *req, session_t *session) {
         return;
     }
 
-    int new_id = 0;
-    if (strcmp(dir, "..") == 0) {
-        ret = db_folder_find_parent(session->current_folder_id, &new_id);
-    } else {
-        ret = db_folder_find_folder_by_name(session->current_folder_id, dir, &new_id);
+    if (!folder_service_check_fname(dir)) {
+        snprintf(res, sizeof(res), "422 INVALID_FOLDER_NAME\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
     }
 
+    bool flag;
+    ret = db_folder_check_exist_dirname(session->current_folder_id, dir, &flag);
+    if (ret != OK) {
+        snprintf(res, sizeof(res), "500 ERROR_SERV\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    if (flag == false) {
+        snprintf(res, sizeof(res), "409 FOLDER_ALREADY_EXISTS\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    // Tạo folder mới
+    ret = db_folder_create_new_folder(session->current_folder_id, session->user_id, dir);
     if (ret == ERR) {
-        snprintf(res, sizeof(res), "500 ERR_SERVER\r\n");
-        net_send(clientfd, res, strlen(res), 0);
-        return;
-    } else if (ret == DB_FOLDER_DELETED || ret == DB_FOLDER_NOT_FOUND) {
-        snprintf(res, sizeof(res), "422 INVALID_PATH\r\n");
-        net_send(clientfd, res, strlen(res), 0);
-        return;
-    } else if (ret == DB_FOLDER_NAME_NOT_FOUND) {
-        snprintf(res, sizeof(res), "409 NOT_A_DIRECTORY\r\n");
+        snprintf(res, sizeof(res), "500 ERROR_SERV\r\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
-    // Oke
-    session->current_folder_id = new_id;
-    // Update path thu muc
-    folder_service_change_dir(session, dir);
-
-    snprintf(res, sizeof(res), "200 CHANGE_DIRECTORY_SUCCESS\r\n");
+    snprintf(res, sizeof(res), "200 MKDIR_SUCCESS\r\n");
     net_send(clientfd, res, strlen(res), 0);
 }

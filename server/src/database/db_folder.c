@@ -272,7 +272,7 @@ db_errror_code db_folder_find_folder_by_name(int folder_id, char *dirname, int *
 
     const char *query = "select id from folders " 
         "where parent_id = $1 and name = $2 "
-        "and deleted_at is not null";
+        "and deleted_at is null";
     
     char id_str[32]; snprintf(id_str, sizeof(id_str), "%d", folder_id);
 
@@ -305,5 +305,80 @@ db_errror_code db_folder_find_folder_by_name(int folder_id, char *dirname, int *
     PQclear(res);
     db_release(conn);
 
+    return OK;
+}
+
+db_errror_code db_folder_check_exist_dirname(int folder_id, char *fname, bool *flag) {
+    if (fname == NULL)
+        return ERR_INVALID_ARGUMENT;
+
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", folder_id);
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        fprintf(stderr, "db_acuire(): pool exhausted\n");
+        return ERR;
+    }
+
+    const char *query = "select * from folders where parent_id = $1 and name = $2";
+    const char *params[2];
+    params[0] = id_str;
+    params[1] = fname;
+
+    PGresult *res = PQexecParams(conn, query, 2, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK)  {
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    // Không tìm thấy folder với tên đó
+    if (PQntuples(res) == 0) {
+        *flag = true;
+    } else {
+        *flag = false;
+    }
+
+    PQclear(res);
+    db_release(conn);
+    return OK;
+}
+
+db_errror_code db_folder_create_new_folder(int folder_id, int owner_id, char *fname) {
+    if (fname == NULL)
+        return ERR_INVALID_ARGUMENT;
+
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", folder_id);
+    char owner_str[32];
+    snprintf(owner_str, sizeof(owner_str), "%d", owner_id);
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query = "insert into folders "
+        "(owner_id, parent_id, name) "
+        "values ($1, $2, $3); ";
+
+    const char *params[3];
+    params[0] = owner_str;
+    params[1] = id_str;
+    params[2] = fname;
+
+    PGresult *res = PQexecParams(conn, query, 3, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+        fprintf(stderr, "insert folder error: %s\n", PQerrorMessage(conn));
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    PQclear(res);
+    db_release(conn);
     return OK;
 }

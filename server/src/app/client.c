@@ -42,6 +42,8 @@ void handle_client(int clientfd) {
             handle_list(clientfd, buf, &session);
         } else if (strcmp(cmd, "CD") == 0) {
             handle_cd(clientfd, buf, &session); 
+        } else if (strcmp(cmd, "MKDIR") == 0) {
+            handle_mkdir(clientfd, buf, &session);
         }
     }
 }
