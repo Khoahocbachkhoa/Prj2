@@ -126,4 +126,39 @@
 9. Đổi tên
 
 Truyền tải:
-    
+
+10. upload
+    request:
+        UPLOAD <filename> <filesize>
+    reponse:
+        150 READY_TO_RECEIVE
+            Cho phép client bắt đầu upload file, khi upfile xong gửi lại phản hồi
+        200 UPLOAD_SUCCESS
+            Báo hiệu server nhận file thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền
+        409 FILE_ALREADY_EXISTS
+            File đã tồn tại
+        422 INVALID_FILE_NAME
+            Tên file không hợp lệ
+        500 ERROR_SERVER
+            Lỗi từ server
+
+11. download
+    request:
+        DOWNLOAD <filename>
+    reponse:
+        150 START_DOWNLOAD <filesize>
+            Server sẵn sàng bắt đầu gửi file
+        200 DOWNLOAD_SUCCESS
+            Server gừi file xong
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền
+        404 FILE_NOT_FOUND
+            Không tìm thấy file
+        500 ERROR_SERVER
+            Lỗi từ server

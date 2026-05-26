@@ -24,4 +24,10 @@ void handle_cd(int clientfd, const char *req, session_t *session);
 // Xử lý mkdir
 void handle_mkdir(int clientfd, const char *req, session_t* session);
 
+// upload
+void handle_upload(int clientfd, const char *req, session_t *session);
+
+// download
+void handle_download(int clientfd, const char *req, session_t *session);
+
 #endif
