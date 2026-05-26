@@ -38,10 +38,44 @@ bool storage_save_file(const char *path, int clientfd, size_t filesize) {
     return true;
 }
 
-bool storage_send_file(const char *path, int clientfd) {
+bool storage_send_file(const char *path, int clientfd, size_t filesize) {
+    FILE *fp = fopen(path, "rb");
+
+    if (fp == NULL) {
+        return false;
+    }
+
+    char buf[4096];
+    size_t remaining = filesize;
+
+    while (remaining > 0) {
+        // Đọc file theo từng chunk
+        size_t chunk = (remaining < sizeof(buf)) ? remaining : sizeof(buf);
+
+        size_t nread = fread(buf, 1, chunk, fp);
+
+        // Lỗi khi đọc file
+        if (nread == 0) {
+            fclose(fp);
+            return ERR;
+        }
+
+        size_t n = net_send_all(clientfd, buf, nread, 0);
+
+        // Lỗi khi gửi hoặc client đóng kết nối
+        if (n <= 0) {
+            fclose(fp);
+            return false;
+        }
+
+        remaining -= nread;
+    }
+
+    fclose(fp);
     return true;
 }
 
-bool storage_delete_file(const char *path) {
-    return true;
-}
+// Not implement yet
+// bool storage_delete_file(const char *path) {
+//     return true;
+// }

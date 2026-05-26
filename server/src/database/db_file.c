@@ -150,3 +150,51 @@ db_errror_code db_file_insert(char *fname, char *storagekey, int fsize, session_
 
     return OK;
 }
+
+db_errror_code db_file_find_by_name(int folder_id, char *fname, FileMeta *meta) {
+    if (fname == NULL || meta == NULL)
+        return ERR_INVALID_ARGUMENT;
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query =
+        "select id, owner_id, filename, storage_key, size "
+        "from files "
+        "where folder_id = $1 "
+        "and filename = $2 "
+        "and deleted_at is NULL;";
+
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", folder_id);
+    const char *params[2];
+    params[0] = id_str;
+    params[1] = fname;
+
+    PGresult *res = PQexecParams(conn, query, 2, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    if (PQntuples(res) == 0) {
+        PQclear(res);
+        db_release(conn);
+        return DB_FILE_NOT_FOUND;
+    }    
+
+    meta->id = atoi(PQgetvalue(res, 0, 0));
+    meta->owner_id = aoit(PQgetvalue(res, 0, 1));
+    snprintf(meta->filename, sizeof(meta->filename), "%s", PQgetvalue(res, 0, 2));
+    snprintf(meta->storage_key, sizeof(meta->storage_key), "%s", PQgetvalue(res, 0, 3));
+    meta->size = atol(PQgetvalue(res, 0, 4));
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

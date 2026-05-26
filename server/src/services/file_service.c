@@ -73,5 +73,35 @@ db_errror_code file_service_upload(int clientfd, char *fname, int fsize, session
 }
 
 db_errror_code file_service_download(int clientfd, char *fname, session_t *session) {
+    if (fname == NULL)
+        return ERR_INVALID_ARGUMENT;
 
+    // Kiểm tra xem file đã tồn tại chưa
+    // int ret = db_file_exists(session->current_folder_id, fname);
+    // if (ret == DB_FILE_NOT_FOUND) {
+    //     return ERR_NOT_FOUND;
+    // }
+
+    // Lấy metadata của file
+    FileMeta meta;
+    int ret = db_file_find_by_name(session->current_folder_id, fname, &meta);
+    if (ret != OK) {
+        return ret;
+    }
+
+    // Bắt đầu gửi file
+    char res[256];
+    snprintf(res, sizeof(res), "50 START_DOWNLOAD %ld\r\n", meta.size);
+    net_send(clientfd, res, strlen(res), 0);
+
+    // Gọi service để gửi file từ disk cho client
+    char path[256];
+    snprintf(path, sizeof(path), "./storage/%s/%s", session->username, meta.storage_key);
+    bool ok = storage_send_file(path, clientfd, meta.size);
+
+    if (!ok) {
+        return ERR;
+    }
+
+    return OK;
 }
