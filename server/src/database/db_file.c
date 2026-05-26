@@ -126,7 +126,7 @@ db_errror_code db_file_insert(char *fname, char *storagekey, int fsize, session_
     char folder_str[32];
     char size_str[32];
     snprintf(owner_str, sizeof(owner_str), "%d", session->user_id);
-    snprintf(folder_str, sizeof(folder_str), "%d", session->current_folder_id);
+    snprintf(folder_str, sizeof(folder_str), "%ld", session->current_folder_id);
     snprintf(size_str, sizeof(size_str), "%d", fsize);
 
     const char *params[5];
