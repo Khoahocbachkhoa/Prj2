@@ -95,7 +95,7 @@ db_errror_code file_service_download(int clientfd, char *fname, session_t *sessi
     net_send(clientfd, res, strlen(res), 0);
 
     // Gọi service để gửi file từ disk cho client
-    char path[256];
+    char path[512];
     snprintf(path, sizeof(path), "./storage/%s/%s", session->username, meta.storage_key);
     bool ok = storage_send_file(path, clientfd, meta.size);
 

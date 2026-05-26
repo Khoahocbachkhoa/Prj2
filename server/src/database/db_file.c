@@ -188,7 +188,7 @@ db_errror_code db_file_find_by_name(int folder_id, char *fname, FileMeta *meta) 
     }    
 
     meta->id = atoi(PQgetvalue(res, 0, 0));
-    meta->owner_id = aoit(PQgetvalue(res, 0, 1));
+    meta->owner_id = atoi(PQgetvalue(res, 0, 1));
     snprintf(meta->filename, sizeof(meta->filename), "%s", PQgetvalue(res, 0, 2));
     snprintf(meta->storage_key, sizeof(meta->storage_key), "%s", PQgetvalue(res, 0, 3));
     meta->size = atol(PQgetvalue(res, 0, 4));
