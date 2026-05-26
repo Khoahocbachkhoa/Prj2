@@ -124,6 +124,7 @@
         500 ERROR_SERVER
 
 9. Đổi tên
+    request:
 
 Truyền tải:
 
@@ -162,3 +163,132 @@ Truyền tải:
             Không tìm thấy file
         500 ERROR_SERVER
             Lỗi từ server
+
+Chia sẻ:
+12. Chia sẻ 1 file 
+    Mô tả:
+        Chia sẻ 1 file cho 1 user khác để user kia có thể tải về
+    request:
+        SHARE_FILE <filename> <username>
+    reponse:
+        200 SHARE_FILE_SUCCESS
+            Chia sẻ thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền chia sẻ file này
+        404 FILE_NOT_FOUND
+            Không tìm thấy file
+        404 USER_NOT_FOUND
+            Không tìm thấy user được chia sẻ
+        409 FILE_ALREADY_SHARED
+            File đã được chia sẻ cho user này rồi
+        422 INVALID_USERNAME
+            Username không hợp lệ
+        500 ERROR_SERVER
+            Lỗi phía server
+
+13. Chia sẻ 1 thư mục làm việc chung
+    Mô tả:
+        Chia sẻ 1 folder cho các user khác để có thể upload, download chung
+    request:
+        SHARE_FOLDER <foldername> <username> <role>
+    response:
+        200 SHARE_FOLDER_SUCCESS
+            Chia sẻ thư mục thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền chia sẻ thư mục này
+        404 FOLDER_NOT_FOUND
+            Không tìm thấy thư mục
+        404 USER_NOT_FOUND
+            Không tìm thấy user được chia sẻ
+        409 FOLDER_ALREADY_SHARED
+            Folder đã được chia sẻ cho user này rồi
+        422 INVALID_ROLE
+            Role không hợp lệ
+        500 ERROR_SERVER
+            Lỗi từ phía server
+
+14, Hủy quyền chia sẻ file
+    request:
+        UNSHARE_FILE <filename> <username>
+
+    response:
+        200 UNSHARE_FILE_SUCCESS
+            Hủy chia sẻ file thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền hủy chia sẻ file này
+        404 FILE_NOT_FOUND
+            Không tìm thấy file
+        404 USER_NOT_FOUND
+            Không tìm thấy user
+        404 SHARE_NOT_FOUND
+            File chưa được chia sẻ cho user này
+        500 ERROR_SERVER
+            Lỗi phía server
+
+15. Hủy chia sẻ thư mục làm việc chung
+    request:
+        UNSHARE_FOLDER <foldername> <username>
+
+    response:
+        200 UNSHARE_FOLDER_SUCCESS
+            Hủy chia sẻ thư mục thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền hủy chia sẻ thư mục này
+        404 FOLDER_NOT_FOUND
+            Không tìm thấy thư mục
+        404 USER_NOT_FOUND
+            Không tìm thấy user
+        404 SHARE_NOT_FOUND
+            Folder chưa được chia sẻ cho user này
+        500 ERROR_SERVER
+            Lỗi phía server
+
+16. Liệt kê danh sách user được chia sẻ
+
+    Mô tả:
+        Hiển thị danh sách các user đang được chia sẻ quyền
+        truy cập tới file hoặc thư mục
+
+    request:
+        LIST_SHARED_USERS <resource>
+    response:
+        200 LIST_SHARED_USERS_BEGIN
+            <username> <role>
+            <username> <role>
+            ...
+        200 LIST_SHARED_USERS_END
+            Liệt kê thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        403 ACCESS_DENIED
+            Không có quyền xem danh sách chia sẻ
+        404 RESOURCE_NOT_FOUND
+            Không tìm thấy file hoặc thư mục
+        500 ERROR_SERVER
+            Lỗi phía server
+
+17. Xem danh sách tài nguyên được chia sẻ với tôi
+    Mô tả:
+        Hiển thị các file và thư mục mà user khác đã chia sẻ
+        cho người dùng hiện tại
+    request:
+        LIST_SHARED_WITH_ME
+    response:
+        200 LIST_SHARED_WITH_ME_BEGIN
+            FILE <filename> <owner>
+            FOLDER <foldername> <owner> <role>
+            ...
+        200 LIST_SHARED_WITH_ME_END
+            Liệt kê thành công
+        401 NOT_LOGIN_YET
+            Chưa đăng nhập
+        500 ERROR_SERVER
+            Lỗi phía server
