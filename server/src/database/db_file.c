@@ -64,3 +64,89 @@ db_errror_code db_file_list(int folder_id, Entry *entries, size_t *maxlen) {
 
     return OK;
 }
+
+db_errror_code db_file_exists(int fid, const char *fname) {
+    if (fname == NULL) {
+        return ERR_INVALID_ARGUMENT;
+    }
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query = "select 1 "
+        "from files "
+        "where filename = $1 "
+        "and folder_id = $2 "
+        "and deleted_at is NULL";
+    
+    char id[32]; snprintf(id, sizeof(id), "%d", fid);
+    
+    const char *params[2];
+    params[0] = fname;
+    params[1] = id;
+
+    PGresult *res = PQexecParams(conn, query, 2, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr, "Error: %s", PQerrorMessage(conn));
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    db_errror_code ret;
+
+    if (PQntuples(res) > 0) {
+        ret = DB_FILE_EXISTS;
+    } else {
+        ret = DB_FILE_NOT_FOUND;
+    }
+
+    PQclear(res);
+    db_release(conn);
+
+    return ret;
+}
+
+db_errror_code db_file_insert(char *fname, char *storagekey, int fsize, session_t *session) {
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query =
+        "INSERT INTO files "
+        "(owner_id, folder_id, filename, storage_key, size) "
+        "VALUES ($1, $2, $3, $4, $5);";
+
+    char owner_str[32];
+    char folder_str[32];
+    char size_str[32];
+    snprintf(owner_str, sizeof(owner_str), "%d", session->user_id);
+    snprintf(folder_str, sizeof(folder_str), "%d", session->current_folder_id);
+    snprintf(size_str, sizeof(size_str), "%d", fsize);
+
+    const char *params[5];
+    params[0] = owner_str;
+    params[1] = folder_str;
+    params[2] = fname;
+    params[3] = storagekey;
+    params[4] = size_str;
+
+    PGresult *res = PQexecParams(conn, query, 5, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

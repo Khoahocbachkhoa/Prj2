@@ -47,7 +47,7 @@ CREATE TABLE files (
 
     filename VARCHAR(255) NOT NULL,
 
-    storage_key TEXT NOT NULL UNIQUE,
+    storage_key TEXT NOT NULL UNIQUE, -- storage key đơn giản gồm dấu thời gian + ngày
 
     size BIGINT NOT NULL DEFAULT 0,
 

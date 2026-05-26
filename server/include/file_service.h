@@ -3,8 +3,15 @@
 
 #include "client.h"
 #include <stdbool.h>
+#include "database.h"
 
 // Kiểm tra tính hợp lệ của tên file
-//bool file_service_check_filename(char *fname);
+bool file_service_check_filename(char *fname);
+
+// Service upload một file
+db_errror_code file_service_upload(int clientfd, char *fname, int fsize, session_t *session);
+
+// Service download một file
+db_errror_code file_service_download(int clientfd, char *fname, session_t *session);
 
 #endif

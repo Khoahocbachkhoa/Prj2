@@ -45,9 +45,9 @@ void handle_client(int clientfd) {
         } else if (strcmp(cmd, "MKDIR") == 0) {
             handle_mkdir(clientfd, buf, &session);
         } else if (strcmp(cmd, "UPLOAD") == 0) {
-            
+            handle_upload(clientfd, buf, &session); 
         } else if (strcmp(cmd, "DOWNLOAD") == 0) {
-
+            handle_download(clientfd, buf, &session);
         }
     }
 }
