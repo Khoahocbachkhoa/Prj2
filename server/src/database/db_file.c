@@ -209,7 +209,7 @@ db_errror_code db_file_find_id_by_name(int folder_id, char *fname, int *id) {
     }
 
     const char *query =
-        "select id"
+        "select id "
         "from files "
         "where folder_id = $1 "
         "and filename = $2 "

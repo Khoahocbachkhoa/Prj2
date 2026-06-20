@@ -47,9 +47,10 @@ typedef enum {
     // file
     DB_FILE_INVALID_NAME,
     DB_FILE_EXISTS,
-    DB_FILE_NOT_FOUND
+    DB_FILE_NOT_FOUND,
 
     // sharing
+    DB_SHARING_NOT_FOUND
     
 } db_errror_code;
 

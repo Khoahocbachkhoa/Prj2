@@ -47,6 +47,7 @@ void handle_share_file(int clientfd, const char *req, session_t *session) {
         return;
     } else if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERR_SERVER\r\n");
+        //printf("db_user_find_id_userName eroror\n");
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
@@ -56,6 +57,7 @@ void handle_share_file(int clientfd, const char *req, session_t *session) {
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
+        printf("file find id by name eroror\n");
         return;
     } else if (ret == DB_FILE_NOT_FOUND) {
         snprintf(res, sizeof(res), "404 FILE_NOT_FOUND\r\n");
@@ -68,6 +70,7 @@ void handle_share_file(int clientfd, const char *req, session_t *session) {
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
+        printf("grant access eroror\n");
         return;
     }
 
