@@ -118,7 +118,7 @@ db_errror_code db_sharing_revoke_file_access(int file_id, int user_id) {
     return OK;
 }
 
-db_errror_code db_sharing_list_users_shared(int file_id, char **users, size_t *users_size) {
+db_errror_code db_sharing_list_users_shared(int file_id, char **users, int *users_size) {
     PGconn *conn = db_acquire();
     if (conn == NULL) {
         fprintf(stderr, "DB exhausted error\n");
@@ -177,6 +177,7 @@ db_errror_code db_sharing_list_users_shared(int file_id, char **users, size_t *u
         const char *username = PQgetvalue(res, i, 0);
 
         //users[i] = strdup(username);
+        users[i] = malloc(256 * sizeof(char));
         memcpy(users[i], username, 256);
         if (users[i] == NULL) {
             for (int j = 0; j < i; j++) {
@@ -188,6 +189,98 @@ db_errror_code db_sharing_list_users_shared(int file_id, char **users, size_t *u
             return ERR;
         }
     }
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}
+
+db_errror_code db_sharing_list_files_shared_with_me(int user_id, Entry *entries, int *len) {
+    if (entries == NULL || len == NULL) {
+        return ERR;
+    }
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "SELECT "
+        "f.id, "
+        "f.filename, "
+        "u.username, "
+        "f.updated_at "
+        "FROM file_permissions fp "
+        "JOIN files f ON fp.file_id = f.id "
+        "JOIN users u ON f.owner_id = u.id "
+        "WHERE fp.user_id = $1 "
+        "ORDER BY f.filename";
+
+    char user_id_str[16];
+    snprintf(user_id_str, sizeof(user_id_str),
+             "%d", user_id);
+
+    const char *params[1] = {
+        user_id_str
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        1,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr,
+                "Failed to list shared files: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    int rows = PQntuples(res);
+
+    if (rows > *len) {
+        fprintf(stderr,
+                "Buffer too small (%d < %d)\n",
+                *len, rows);
+
+        *len = rows;
+
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    for (int i = 0; i < rows; i++) {
+        entries[i].id = atol(PQgetvalue(res, i, 0));
+
+        entries[i].type = ENTRY_FILE;
+
+        snprintf(entries[i].name, sizeof(entries[i].name), "%s", PQgetvalue(res, i, 1));
+
+        snprintf(entries[i].owner,
+                sizeof(entries[i].owner),
+                "%s",
+                PQgetvalue(res, i, 2));
+
+        snprintf(entries[i].updated_at,
+                sizeof(entries[i].updated_at),
+                "%s",
+                PQgetvalue(res, i, 3));
+    }
+
+    *len = rows;
 
     PQclear(res);
     db_release(conn);

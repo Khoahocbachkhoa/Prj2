@@ -48,7 +48,7 @@ void handle_list_share_file(int clientfd, const char *req, session_t *session) {
     }
 
     // Gui cac user dang duoc chia se quyen
-    char users[256][256];
+    char *users[256];
     int n = 256;
     ret = db_sharing_list_users_shared(file_id, users, &n);
     if (ret == ERR) {
@@ -63,6 +63,7 @@ void handle_list_share_file(int clientfd, const char *req, session_t *session) {
     char buf[256];
     for (int i = 0; i < n; ++i) {
         snprintf(buf, sizeof(buf), "%s\n", users[i]);
+        free(users[i]);
         net_send(clientfd, buf, strlen(buf), 0);
     }
 

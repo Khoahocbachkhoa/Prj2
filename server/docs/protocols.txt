@@ -290,7 +290,8 @@ Chia sẻ:
         Hiển thị các file và thư mục mà user khác đã chia sẻ
         cho người dùng hiện tại
     request:
-        LIST_SHARED_WITH_ME
+        LIST_SHARED_WITH_FILES_ME
+        LIST_SHARED_WITH_FOLDERS_ME
     response:
         200 LIST_SHARED_WITH_ME_BEGIN
             FILE <filename> <owner>
@@ -305,7 +306,7 @@ Chia sẻ:
 
 18. Tải file được chia sẻ với tôi
     request:
-        DOWNLOAD_SHARED <username> <filename>
+        DOWNLOAD_SHARED <fileid>
     response:
         Tương tự Download
 

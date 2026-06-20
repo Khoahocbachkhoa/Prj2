@@ -54,7 +54,9 @@ void handle_list_share_file(int clientfd, const char *req, session_t *session);
 void handle_list_share_folder(int clientfd, const char *req, session_t *session);
 
 // hiển thị các tài nguyên đang được chia sẻ với tôi
-void handle_list_shared_with_me(int clientfd, const char *req, session_t *session);
+void handle_list_shared_files_with_me(int clientfd, const char *req, session_t *session);
+
+void handle_list_shared_folders_with_me(int clientfd, const char *req, session_t *session);
 
 // tải về files được chia sẻ với tôi
 void handle_download_share(int clientfd, const char *req, session_t *session);

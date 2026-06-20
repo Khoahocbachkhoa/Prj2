@@ -68,8 +68,10 @@ void handle_client(int clientfd) {
             handle_list_share_file(clientfd, buf, &session);
         } else if (strcmp(cmd, "LIST_SHARED_USERS_FOLDER") == 0) {
             handle_list_share_folder(clientfd, buf, &session);
-        } else if (strcmp(cmd, "LIST_SHARED_WITH_ME") == 0) {
-            handle_list_shared_with_me(clientfd, buf, &session);
+        } else if (strcmp(cmd, "LIST_SHARED_FILES_WITH_ME") == 0) {
+            handle_list_shared_files_with_me(clientfd, buf, &session);
+        } else if (strcmp(cmd, "LIST_SHARED_FOLDERS_WITH_ME") == 0) {
+            handle_list_shared_folders_with_me(clientfd, buf, &session);
         } else if (strcmp(cmd, "DOWNLOAD_SHARED") == 0) {
             handle_download_share(clientfd, buf, &session);
         } else if (strcmp(cmd, "OPEN_SHARED_FOLDER") == 0) {
