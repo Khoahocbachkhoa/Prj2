@@ -125,6 +125,15 @@
 
 9. Đổi tên
     request:
+        RENAME old_name new_name
+    response:
+        200 RENAME_SUCCESS
+            đổi tên thành công
+        401 NOT_LOGIN_YET
+        403 ACCESS_DENIED
+            Chỉ được phép đổi tên nếu chủ sỡ hữu là mình
+        404 FILE_NOT_FOUND
+        500 ERROR_SERVER
 
 Truyền tải:
 
@@ -258,7 +267,8 @@ Chia sẻ:
         truy cập tới file hoặc thư mục
 
     request:
-        LIST_SHARED_USERS <resource>
+        LIST_SHARED_USERS_FILE <resource>
+        LIST_SHARED_USERS_FOLDER <resource>
     response:
         200 LIST_SHARED_USERS_BEGIN
             <username> <role>
@@ -292,3 +302,30 @@ Chia sẻ:
             Chưa đăng nhập
         500 ERROR_SERVER
             Lỗi phía server
+
+18. Tải file được chia sẻ với tôi
+    request:
+        DOWNLOAD_SHARED <username> <filename>
+    response:
+        Tương tự Download
+
+19. Di chuyển vào thư mục được chia sẻ
+    request:
+        OPEN_SHARED_FOLDER <owner> <folder>
+    reponse:
+        200 Ok
+            điều hướng thành công
+        401 ACCESS_DENIED
+            không có quyền
+    Ghi chú:
+        Khi cd vào 1 thư mục được chia sẻ, các lệnh download, upload, .. dùng bình thường
+
+20. Thoát khỏi chế độ chia sẻ
+    request:
+        EXIT_SHARED
+    response:
+        200 Ok
+            Thoát khỏi chế độ chia sẻ.
+
+Audit:
+-- todo: implement in the future

@@ -38,7 +38,6 @@ void folder_service_change_dir(session_t *session, const char *dir) {
     }
 }
 
-
 // Kiểm tra tính hợp lệ của một folder name
 bool folder_service_check_fname(char *name) {
     if (name == NULL || *name == '\0')

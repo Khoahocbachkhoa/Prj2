@@ -198,3 +198,47 @@ db_errror_code db_file_find_by_name(int folder_id, char *fname, FileMeta *meta) 
 
     return OK;
 }
+
+db_errror_code db_file_find_id_by_name(int folder_id, char *fname, int *id) {
+    if (fname == NULL)
+        return ERR_INVALID_ARGUMENT;
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query =
+        "select id"
+        "from files "
+        "where folder_id = $1 "
+        "and filename = $2 "
+        "and deleted_at is NULL;";
+
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", folder_id);
+    const char *params[2];
+    params[0] = id_str;
+    params[1] = fname;
+
+    PGresult *res = PQexecParams(conn, query, 2, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    if (PQntuples(res) == 0) {
+        PQclear(res);
+        db_release(conn);
+        return DB_FILE_NOT_FOUND;
+    }    
+
+    *id = atoi(PQgetvalue(res, 0, 0));
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

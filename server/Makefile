@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -Wall -Wextra -g -I./include
+CFLAGS = -O2 -Wall -Wextra -g -I./include
 
 SRC = $(shell find src -name "*.c")
 

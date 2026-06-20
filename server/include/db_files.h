@@ -25,4 +25,7 @@ db_errror_code db_file_insert(char *fname, char *storagekey, int fsize, session_
 // Lấy metadata của một file theo tên file
 db_errror_code db_file_find_by_name(int folder_id, char *fname, FileMeta *meta);
 
+//Lấy file id có filename
+db_errror_code db_file_find_id_by_name(int folder_id, char *fname, int *id);
+
 #endif

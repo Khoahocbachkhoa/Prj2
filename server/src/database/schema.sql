@@ -1,5 +1,3 @@
--- todo: Sau này thêm bảo mật
-
 -- Users
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,

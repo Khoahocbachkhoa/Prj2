@@ -48,8 +48,9 @@ db_errror_code file_service_upload(int clientfd, char *fname, int fsize, session
     // Tạo storage path
     char fullpath[256];
     
-    snprintf(fullpath, sizeof(fullpath), "./storage/%s/%s", session->username, storage_key);
-    
+    //snprintf(fullpath, sizeof(fullpath), "./storage/%s/%s", session->username, storage_key);
+    snprintf(fullpath, sizeof(fullpath), "./storage/%s", storage_key);
+
     // Báo cho client bắt đầu gửi data
     char res[128];
     snprintf(res, sizeof(res), "150 READY_TO_RECEIVE\r\n");
@@ -96,7 +97,10 @@ db_errror_code file_service_download(int clientfd, char *fname, session_t *sessi
 
     // Gọi service để gửi file từ disk cho client
     char path[512];
-    snprintf(path, sizeof(path), "./storage/%s/%s", session->username, meta.storage_key);
+    
+    //snprintf(path, sizeof(path), "./storage/%s/%s", session->username, meta.storage_key);
+    snprintf(path, sizeof(path), "./storage/%s", meta.storage_key);
+
     bool ok = storage_send_file(path, clientfd, meta.size);
 
     if (!ok) {

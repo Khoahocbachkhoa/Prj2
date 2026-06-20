@@ -14,9 +14,13 @@ void handle_client(int clientfd) {
     session.logged_in = 0;
     session.user_id = -1;
     session.current_folder_id = -1;
+    // init sharing mode
+    session.in_sharing_mode = 0;
+    session.share_root_folder_id = -1;
+    session.old_folder_id = -1;
 
     char buf[BUFSIZ];
-    char cmd[16];
+    char cmd[32];
 
     // Nhận request từ người dùng và phản hồi
     while (1) {
@@ -44,10 +48,37 @@ void handle_client(int clientfd) {
             handle_cd(clientfd, buf, &session); 
         } else if (strcmp(cmd, "MKDIR") == 0) {
             handle_mkdir(clientfd, buf, &session);
-        } else if (strcmp(cmd, "UPLOAD") == 0) {
+        } else if (strcmp(cmd, "DELETE") == 0) {
             handle_upload(clientfd, buf, &session); 
+        } else if (strcmp(cmd, "RENAME") == 0) {
+            handle_rename(clientfd, buf, &session);
+        } else if (strcmp(cmd, "UPLOAD") == 0) {
+            handle_upload(clientfd, buf, &session);
         } else if (strcmp(cmd, "DOWNLOAD") == 0) {
             handle_download(clientfd, buf, &session);
+        } else if (strcmp(cmd, "SHARE_FILE") == 0) {
+            handle_share_file(clientfd, buf, &session);
+        } else if (strcmp(cmd, "SHARE_FOLDER") == 0) {
+            handle_share_folder(clientfd, buf, &session);
+        } else if (strcmp(cmd, "UNSHARE_FILE") == 0) {
+            handle_unshare_file(clientfd, buf, &session);
+        } else if (strcmp(cmd, "UNSHARE_FOLDER") == 0) {
+            handle_unshare_folder(clientfd, buf, &session);
+        } else if (strcmp(cmd, "LIST_SHARED_USERS_FILE") == 0) {
+            handle_list_share_file(clientfd, buf, &session);
+        } else if (strcmp(cmd, "LIST_SHARED_USERS_FOLDER") == 0) {
+            handle_list_share_folder(clientfd, buf, &session);
+        } else if (strcmp(cmd, "LIST_SHARED_WITH_ME") == 0) {
+            handle_list_shared_with_me(clientfd, buf, &session);
+        } else if (strcmp(cmd, "DOWNLOAD_SHARED") == 0) {
+            handle_download_share(clientfd, buf, &session);
+        } else if (strcmp(cmd, "OPEN_SHARED_FOLDER") == 0) {
+            handle_open_shared_folder(clientfd, buf, &session);
+        } else if (strcmp(cmd, "EXIT_SHARED") == 0) {
+            handle_exit_shared(clientfd, buf, &session);
+        } else {
+            // Unsupported protocol
+            handle_unsupported(clientfd, buf, &session);
         }
     }
 }
