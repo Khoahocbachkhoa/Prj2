@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../../include/db_pool.h"
 #include "../../include/database.h"
@@ -109,6 +110,83 @@ db_errror_code db_sharing_revoke_file_access(int file_id, int user_id) {
         PQclear(res);
         db_release(conn);
         return ERR;
+    }
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}
+
+db_errror_code db_sharing_list_users_shared(int file_id, char **users, size_t *users_size) {
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "SELECT u.username "
+        "FROM file_permissions fp "
+        "JOIN users u ON fp.user_id = u.id "
+        "WHERE fp.file_id = $1 "
+        "ORDER BY u.username";
+
+    char file_id_str[16];
+    snprintf(file_id_str, sizeof(file_id_str), "%d", file_id);
+
+    const char *params[1] = { file_id_str };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        1,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr,
+                "Failed to list shared users: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    int rows = PQntuples(res);
+
+    if (*users_size < rows) {
+        // Khong du kich thuoc bo dem
+        rows = *users_size;
+    }
+
+    *users_size = rows;
+
+    if (rows == 0) {
+        PQclear(res);
+        db_release(conn);
+        return OK;
+    }
+
+    for (int i = 0; i < rows; i++) {
+        const char *username = PQgetvalue(res, i, 0);
+
+        //users[i] = strdup(username);
+        memcpy(users[i], username, 256);
+        if (users[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(users[j]);
+            }
+
+            PQclear(res);
+            db_release(conn);
+            return ERR;
+        }
     }
 
     PQclear(res);
