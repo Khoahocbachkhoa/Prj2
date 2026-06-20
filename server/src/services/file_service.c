@@ -9,6 +9,7 @@
 #include "../../include/db_files.h"
 #include "../../include/transport.h"
 #include "../../include/storage.h"
+#include "../../include/db_permission.h"
 
 bool file_service_check_filename(char *name) {
     if (name == NULL || *name == '\0')
@@ -104,6 +105,45 @@ db_errror_code file_service_download(int clientfd, char *fname, session_t *sessi
     bool ok = storage_send_file(path, clientfd, meta.size);
 
     if (!ok) {
+        return ERR;
+    }
+
+    return OK;
+}
+
+db_errror_code file_service_download_by_file_id(int clientfd, int fid, session_t *session) {
+    // Kiểm tra truy nhập
+    int ret;
+
+    ret = db_permission_check_access_file(session->user_id, fid);
+    if (ret != OK) {
+        //printf("Here 1\n");
+        return ERR;
+    }
+    
+    // Lấy metadata của file
+    FileMeta meta;
+    ret = db_file_find_by_id(fid, &meta);
+    if (ret != OK) {
+        //printf("Here 2\n");
+        return ret;
+    }
+
+    // Bắt đầu gửi file
+    char res[256];
+    snprintf(res, sizeof(res), "50 START_DOWNLOAD %ld\r\n", meta.size);
+    net_send(clientfd, res, strlen(res), 0);
+
+    // Gọi service để gửi file từ disk cho client
+    char path[512];
+    
+    //snprintf(path, sizeof(path), "./storage/%s/%s", session->username, meta.storage_key);
+    snprintf(path, sizeof(path), "./storage/%s", meta.storage_key);
+
+    bool ok = storage_send_file(path, clientfd, meta.size);
+
+    if (!ok) {
+        //printf("here 3\n");
         return ERR;
     }
 

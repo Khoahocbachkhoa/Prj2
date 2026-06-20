@@ -199,6 +199,52 @@ db_errror_code db_file_find_by_name(int folder_id, char *fname, FileMeta *meta) 
     return OK;
 }
 
+db_errror_code db_file_find_by_id(int fid, FileMeta *meta) {
+    if (meta == NULL)
+        return ERR_INVALID_ARGUMENT;
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        return ERR;
+    }
+
+    const char *query =
+        "select id, owner_id, filename, storage_key, size "
+        "from files "
+        "where id = $1 "
+        "and deleted_at is NULL;";
+
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", fid);
+    const char *params[2];
+    params[0] = id_str;
+
+    PGresult *res = PQexecParams(conn, query, 1, NULL, params, NULL, NULL, 0);
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    if (PQntuples(res) == 0) {
+        PQclear(res);
+        db_release(conn);
+        return DB_FILE_NOT_FOUND;
+    }    
+
+    meta->id = atoi(PQgetvalue(res, 0, 0));
+    meta->owner_id = atoi(PQgetvalue(res, 0, 1));
+    snprintf(meta->filename, sizeof(meta->filename), "%s", PQgetvalue(res, 0, 2));
+    snprintf(meta->storage_key, sizeof(meta->storage_key), "%s", PQgetvalue(res, 0, 3));
+    meta->size = atol(PQgetvalue(res, 0, 4));
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}
+
 db_errror_code db_file_find_id_by_name(int folder_id, char *fname, int *id) {
     if (fname == NULL)
         return ERR_INVALID_ARGUMENT;
@@ -236,6 +282,70 @@ db_errror_code db_file_find_id_by_name(int folder_id, char *fname, int *id) {
     }    
 
     *id = atoi(PQgetvalue(res, 0, 0));
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}
+
+db_errror_code db_file_get_storage_key_by_id(int file_id, char *storage_key, int storage_key_size) {
+    if (storage_key == NULL || storage_key_size == 0) {
+        return ERR;
+    }
+
+    PGconn *conn = db_acquire();
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "SELECT storage_key "
+        "FROM files "
+        "WHERE id = $1";
+
+    char file_id_str[16];
+    snprintf(file_id_str,
+             sizeof(file_id_str),
+             "%d",
+             file_id);
+
+    const char *params[1] = {
+        file_id_str
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        1,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr,
+                "Failed to get storage key: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+        return ERR;
+    }
+
+    if (PQntuples(res) == 0) {
+        PQclear(res);
+        db_release(conn);
+        return DB_FILE_NOT_FOUND;
+    }
+
+    snprintf(storage_key,
+             storage_key_size,
+             "%s",
+             PQgetvalue(res, 0, 0));
 
     PQclear(res);
     db_release(conn);

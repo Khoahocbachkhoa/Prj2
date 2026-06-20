@@ -50,7 +50,10 @@ typedef enum {
     DB_FILE_NOT_FOUND,
 
     // sharing
-    DB_SHARING_NOT_FOUND
+    DB_SHARING_NOT_FOUND,
+
+    // permission
+    DB_PERMISSION_DENIED
     
 } db_errror_code;
 

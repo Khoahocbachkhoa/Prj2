@@ -43,7 +43,7 @@ void handle_list_shared_files_with_me(int clientfd, const char *req, session_t *
         snprintf(buf,
                  sizeof(buf),
                  "Id:%ld %s %s\r\n",
-                 entries->id,
+                 entries[i].id,
                  entries[i].name,
                  entries[i].owner);
 
