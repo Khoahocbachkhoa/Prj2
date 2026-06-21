@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #include "../../include/db_pool.h"
 #include "../../include/db_folder.h"
@@ -500,6 +501,87 @@ db_errror_code db_folder_soft_delete(int folder_id) {
     }
 
     if (atoi(PQcmdTuples(res)) == 0) {
+        PQclear(res);
+        db_release(conn);
+
+        return DB_FOLDER_NOT_FOUND;
+    }
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}
+
+db_errror_code db_folder_rename(int folder_id, const char *new_name) {
+    if (new_name == NULL) {
+        return ERR;
+    }
+
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "UPDATE folders "
+        "SET name = $2, "
+        "    updated_at = NOW() "
+        "WHERE id = $1 "
+        "AND deleted_at IS NULL;";
+
+    char folder_id_str[16];
+
+    snprintf(folder_id_str,
+             sizeof(folder_id_str),
+             "%d",
+             folder_id);
+
+    const char *params[2] = {
+        folder_id_str,
+        new_name
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        2,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+
+        const char *sqlstate =
+            PQresultErrorField(res,
+                               PG_DIAG_SQLSTATE);
+
+        if (sqlstate &&
+            strcmp(sqlstate, "23505") == 0) {
+
+            PQclear(res);
+            db_release(conn);
+
+            return DB_FOLDER_EXISTS;
+        }
+
+        fprintf(stderr,
+                "db_folder_rename failed: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    if (atoi(PQcmdTuples(res)) == 0) {
+
         PQclear(res);
         db_release(conn);
 

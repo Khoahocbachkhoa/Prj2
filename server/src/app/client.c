@@ -53,7 +53,7 @@ void handle_client(int clientfd) {
         } else if (strcmp(cmd, "RENAME") == 0) {
             handle_rename(clientfd, buf, &session);
         } else if (strcmp(cmd, "RMDIR") == 0) {
-            
+            handle_rmdir(clientfd, buf, &session);
         } else if (strcmp(cmd, "UPLOAD") == 0) {
             handle_upload(clientfd, buf, &session);
         } else if (strcmp(cmd, "DOWNLOAD") == 0) {

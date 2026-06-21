@@ -404,3 +404,70 @@ db_errror_code db_file_soft_delete(int file_id) {
 
     return OK;
 }
+
+db_errror_code db_file_rename(int file_id, const char *new_name) {
+    if (new_name == NULL) {
+        return ERR;
+    }
+
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "UPDATE files "
+        "SET filename = $2, "
+        "    updated_at = NOW() "
+        "WHERE id = $1 "
+        "AND deleted_at IS NULL;";
+
+    char file_id_str[16];
+
+    snprintf(file_id_str,
+             sizeof(file_id_str),
+             "%d",
+             file_id);
+
+    const char *params[2] = {
+        file_id_str,
+        new_name
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        2,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+
+        fprintf(stderr,
+                "db_file_rename failed: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    if (atoi(PQcmdTuples(res)) == 0) {
+        PQclear(res);
+        db_release(conn);
+
+        return DB_FILE_NOT_FOUND;
+    }
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

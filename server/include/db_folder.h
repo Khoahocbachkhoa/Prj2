@@ -55,4 +55,7 @@ db_errror_code db_folder_is_empty(int folder_id);
 // Đánh dấu là xóa 1 thư mục
 db_errror_code db_folder_soft_delete(int folder_id);
 
+// Đổi tên 1 folder name
+db_errror_code db_folder_rename(int folder_id, const char *new_name);
+
 #endif

@@ -37,4 +37,7 @@ db_errror_code db_file_get_storage_key_by_id(int file_id, char *storage_key, int
 // Đánh dấu là đã xóa 1 file
 db_errror_code db_file_soft_delete(int file_id);
 
+// Đổi tên 1 file
+db_errror_code db_file_rename(int file_id, const char *new_name);
+
 #endif
