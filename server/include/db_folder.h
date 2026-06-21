@@ -49,4 +49,10 @@ db_errror_code db_folder_find_folder_by_name(int folder_id, char *dirname, int *
 // Kiểm tra xem có trong thư mục này đã có 1 folder nào đó tên dirname chưa
 db_errror_code db_folder_check_exist_dirname(int folder_id, char *fname, bool *flag);
 
+// Kiểm tra thư mục có rỗng không
+db_errror_code db_folder_is_empty(int folder_id);
+
+// Đánh dấu là xóa 1 thư mục
+db_errror_code db_folder_soft_delete(int folder_id);
+
 #endif

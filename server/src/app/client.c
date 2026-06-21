@@ -49,9 +49,11 @@ void handle_client(int clientfd) {
         } else if (strcmp(cmd, "MKDIR") == 0) {
             handle_mkdir(clientfd, buf, &session);
         } else if (strcmp(cmd, "DELETE") == 0) {
-            handle_upload(clientfd, buf, &session); 
+            handle_delete(clientfd, buf, &session);
         } else if (strcmp(cmd, "RENAME") == 0) {
             handle_rename(clientfd, buf, &session);
+        } else if (strcmp(cmd, "RMDIR") == 0) {
+            
         } else if (strcmp(cmd, "UPLOAD") == 0) {
             handle_upload(clientfd, buf, &session);
         } else if (strcmp(cmd, "DOWNLOAD") == 0) {
@@ -78,8 +80,6 @@ void handle_client(int clientfd) {
             handle_open_shared_folder(clientfd, buf, &session);
         } else if (strcmp(cmd, "EXIT_SHARED") == 0) {
             handle_exit_shared(clientfd, buf, &session);
-        } else if (strcmp(cmd, "RMDIR") == 0) {
-            
         } else {
             // Unsupported protocol
             handle_unsupported(clientfd, buf, &session);

@@ -43,6 +43,7 @@ typedef enum {
     DB_FOLDER_MOVED,
     DB_FOLDER_NOT_FOUND,
     DB_FOLDER_NAME_NOT_FOUND,
+    DB_FOLDER_NOT_EMPTY,
 
     // file
     DB_FILE_INVALID_NAME,

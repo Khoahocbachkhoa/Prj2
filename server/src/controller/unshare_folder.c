@@ -86,9 +86,7 @@ void handle_unshare_folder(int clientfd, const char *req, session_t *session) {
     }
 
     /* Thu hồi quyền */
-    ret = db_sharing_revoke_folder_access(
-            folder_id,
-            user_id);
+    ret = db_sharing_revoke_folder_access(folder_id, user_id);
 
     if (ret == DB_SHARING_NOT_FOUND) {
         snprintf(res, sizeof(res),

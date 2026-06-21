@@ -27,6 +27,9 @@ void handle_delete(int clientfd, const char *req, session_t *session);
 // Xử lý đổi tên
 void handle_rename(int clientfd, const char *req, session_t *session);
 
+// Xóa thư mục trống
+void handle_rmdir(int clientfd, const char *req, session_t *session);
+
 // Xử lý mkdir
 void handle_mkdir(int clientfd, const char *req, session_t* session);
 

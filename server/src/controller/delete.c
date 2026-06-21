@@ -16,7 +16,7 @@ void handle_delete(int clientfd, const char *req, session_t *session) {
     int file_id;
     int ret;
 
-    ret = sscanf(req, "%15s %255s", cmd, filename);
+    ret = sscanf(req, "%s %s\r\n", cmd, filename);
 
     if (ret != 2) {
         snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");

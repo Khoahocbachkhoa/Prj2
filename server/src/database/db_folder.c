@@ -382,3 +382,132 @@ db_errror_code db_folder_create_new_folder(int folder_id, int owner_id, char *fn
     db_release(conn);
     return OK;
 }
+
+db_errror_code db_folder_is_empty(int folder_id) {
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "SELECT EXISTS ("
+        "   SELECT 1 "
+        "   FROM folders "
+        "   WHERE parent_id = $1 "
+        "   AND deleted_at IS NULL"
+        ") "
+        "OR EXISTS ("
+        "   SELECT 1 "
+        "   FROM files "
+        "   WHERE folder_id = $1 "
+        "   AND deleted_at IS NULL"
+        ");";
+
+    char folder_id_str[16];
+    snprintf(folder_id_str,
+             sizeof(folder_id_str),
+             "%d",
+             folder_id);
+
+    const char *params[1] = {
+        folder_id_str
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        1,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr,
+                "db_folder_is_empty: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    int not_empty =
+        strcmp(PQgetvalue(res, 0, 0), "t") == 0;
+
+    PQclear(res);
+    db_release(conn);
+
+    if (not_empty) {
+        return DB_FOLDER_NOT_EMPTY;
+    }
+
+    return OK;
+}
+
+db_errror_code db_folder_soft_delete(int folder_id) {
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "UPDATE folders "
+        "SET "
+        "deleted_at = NOW(), "
+        "updated_at = NOW() "
+        "WHERE id = $1 "
+        "AND deleted_at IS NULL;";
+
+    char folder_id_str[16];
+
+    snprintf(folder_id_str,
+             sizeof(folder_id_str),
+             "%d",
+             folder_id);
+
+    const char *params[1] = {
+        folder_id_str
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        1,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+        fprintf(stderr,
+                "db_folder_soft_delete: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    if (atoi(PQcmdTuples(res)) == 0) {
+        PQclear(res);
+        db_release(conn);
+
+        return DB_FOLDER_NOT_FOUND;
+    }
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}
