@@ -90,14 +90,10 @@ void handle_list_share_folder(int clientfd,
             "200 LIST_SHARED_USERS_BEGIN\r\n");
     net_send(clientfd, res, strlen(res), 0);
 
-    char buf[256];
+    char buf[2048];
 
     for (int i = 0; i < n; ++i) {
-        snprintf(buf,
-                sizeof(buf),
-                "%s %s\r\n",
-                users[i].username,
-                users[i].role);
+        snprintf(buf, sizeof(buf), "%s %s\r\n", users[i].username, users[i].role);
 
         net_send(clientfd,
                 buf,

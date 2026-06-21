@@ -613,3 +613,102 @@ db_errror_code db_sharing_list_folders_shared_with_me(
 
     return OK;
 }
+
+// typedef struct {
+//     int owner_id;
+//     char owner_name[256];
+//     char role[16];
+// } access_info_t;
+
+db_errror_code db_sharing_get_folder_access_info(int folder_id, access_info_t *info, session_t *session) {
+    if (info == NULL || session == NULL) {
+        return ERR;
+    }
+
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL) {
+        fprintf(stderr, "DB exhausted error\n");
+        return ERR;
+    }
+
+    const char *query =
+        "SELECT "
+        "u.id, "
+        "u.username, "
+        "fp.role "
+        "FROM folder_permissions fp "
+        "JOIN folders f "
+        "ON fp.folder_id = f.id "
+        "JOIN users u "
+        "ON f.owner_id = u.id "
+        "WHERE fp.folder_id = $1 "
+        "AND fp.user_id = $2;";
+
+    char folder_id_str[16];
+    char user_id_str[16];
+
+    snprintf(folder_id_str,
+             sizeof(folder_id_str),
+             "%d",
+             folder_id);
+
+    snprintf(user_id_str,
+             sizeof(user_id_str),
+             "%d",
+             session->user_id);
+
+    const char *params[2] = {
+        folder_id_str,
+        user_id_str
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        2,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+
+        fprintf(stderr,
+                "db_sharing_get_folder_access_info: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    if (PQntuples(res) == 0) {
+
+        PQclear(res);
+        db_release(conn);
+
+        return DB_PERMISSION_DENIED;
+    }
+
+    info->owner_id =
+        atoi(PQgetvalue(res, 0, 0));
+
+    snprintf(info->owner_name,
+             sizeof(info->owner_name),
+             "%s",
+             PQgetvalue(res, 0, 1));
+
+    snprintf(info->role,
+             sizeof(info->role),
+             "%s",
+             PQgetvalue(res, 0, 2));
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

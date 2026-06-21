@@ -312,7 +312,7 @@ Chia sẻ:
 
 19. Di chuyển vào thư mục được chia sẻ
     request:
-        OPEN_SHARED_FOLDER <owner> <folder>
+        OPEN_SHARED_FOLDER <folder_id>
     reponse:
         200 Ok
             điều hướng thành công
