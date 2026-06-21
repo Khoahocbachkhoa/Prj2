@@ -21,6 +21,8 @@ typedef struct {
     char owner[64];
 
     char updated_at[128];
+
+    char role[16];
 } Entry;
 
 // Tạo thư mục root khi tạo user

@@ -327,6 +327,3 @@ Chia sẻ:
     response:
         200 Ok
             Thoát khỏi chế độ chia sẻ.
-
-Audit:
--- todo: implement in the future
