@@ -13,6 +13,7 @@ typedef struct {
     
     long current_folder_id; // Id thu muc hien tai
     char cwd[256]; // Thu muc lam viec hien tai
+    char old_cwd[256]; // for restore while exit sharing mode
 
     int in_sharing_mode; // = 1 neu dang o trong folder duoc chia se voi toi
 

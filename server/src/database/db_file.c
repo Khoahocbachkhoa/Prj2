@@ -352,3 +352,55 @@ db_errror_code db_file_get_storage_key_by_id(int file_id, char *storage_key, int
 
     return OK;
 }
+
+db_errror_code db_file_soft_delete(int file_id) {
+    PGconn *conn = db_acquire();
+
+    if (conn == NULL)
+        return ERR;
+
+    const char *query =
+        "UPDATE files "
+        "SET deleted_at = NOW() "
+        "WHERE id = $1 "
+        "AND deleted_at IS NULL;";
+
+    char file_id_str[16];
+
+    snprintf(file_id_str,
+             sizeof(file_id_str),
+             "%d",
+             file_id);
+
+    const char *params[1] = {
+        file_id_str
+    };
+
+    PGresult *res = PQexecParams(
+        conn,
+        query,
+        1,
+        NULL,
+        params,
+        NULL,
+        NULL,
+        0
+    );
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+
+        fprintf(stderr,
+                "soft delete file failed: %s\n",
+                PQerrorMessage(conn));
+
+        PQclear(res);
+        db_release(conn);
+
+        return ERR;
+    }
+
+    PQclear(res);
+    db_release(conn);
+
+    return OK;
+}

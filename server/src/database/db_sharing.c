@@ -5,6 +5,7 @@
 #include "../../include/db_pool.h"
 #include "../../include/database.h"
 #include "../../include/db_sharing.h"
+#include "../../include/db_folder.h"
 
 db_errror_code db_sharing_grant_file_access(int file_id, int user_id) {
     PGconn *conn = db_acquire();
@@ -636,7 +637,8 @@ db_errror_code db_sharing_get_folder_access_info(int folder_id, access_info_t *i
         "SELECT "
         "u.id, "
         "u.username, "
-        "fp.role "
+        "fp.role, "
+        "f.name "
         "FROM folder_permissions fp "
         "JOIN folders f "
         "ON fp.folder_id = f.id "
@@ -706,6 +708,8 @@ db_errror_code db_sharing_get_folder_access_info(int folder_id, access_info_t *i
              sizeof(info->role),
              "%s",
              PQgetvalue(res, 0, 2));
+
+    snprintf(info->folder_name, sizeof(info->folder_name), "%s", PQgetvalue(res, 0, 3));
 
     PQclear(res);
     db_release(conn);

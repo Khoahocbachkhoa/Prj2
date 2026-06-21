@@ -34,4 +34,7 @@ db_errror_code db_file_find_id_by_name(int folder_id, char *fname, int *id);
 // Lấy storage key của 1 file có file id
 db_errror_code db_file_get_storage_key_by_id(int file_id, char *storage_key, int storage_key_size);
 
+// Đánh dấu là đã xóa 1 file
+db_errror_code db_file_soft_delete(int file_id);
+
 #endif

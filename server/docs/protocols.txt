@@ -109,7 +109,8 @@
 
 8. Xóa 1 file hoặc 1 thư mục
     request:
-        DELETE path_or_file_name
+        DELETE file_name
+        RMDIR empty_folder
     reponse:
         200 DELETE_SUCCESS
             Thành công

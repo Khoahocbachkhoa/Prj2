@@ -78,6 +78,7 @@ void handle_open_shared_folder(int clientfd, const char *req, session_t *session
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
+    
 
     // Thay doi session để phù hợp hơn
     session->in_sharing_mode = 1;
@@ -92,8 +93,16 @@ void handle_open_shared_folder(int clientfd, const char *req, session_t *session
 
     strcpy(session->shared_owner, info.owner_name);
 
+    strcpy(session->old_cwd, session->cwd);
+
+    // Change cwd
+    snprintf(session->cwd, sizeof(session->cwd), "%s:/%s", info.owner_name, info.folder_name);
+
     if (strcmp(info.role, "viewer") == 0)
         session->role = ROLE_VIEWER;
     else
         session->role = ROLE_EDITOR;
+
+    snprintf(res, sizeof(res), "200 OKE\r\n");
+    net_send(clientfd, res, strlen(res), 0);
 }

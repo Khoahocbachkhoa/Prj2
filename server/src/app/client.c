@@ -78,6 +78,8 @@ void handle_client(int clientfd) {
             handle_open_shared_folder(clientfd, buf, &session);
         } else if (strcmp(cmd, "EXIT_SHARED") == 0) {
             handle_exit_shared(clientfd, buf, &session);
+        } else if (strcmp(cmd, "RMDIR") == 0) {
+            
         } else {
             // Unsupported protocol
             handle_unsupported(clientfd, buf, &session);

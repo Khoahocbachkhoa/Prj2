@@ -14,6 +14,7 @@ typedef struct {
     int owner_id;
     char owner_name[256];
     char role[16];
+    char folder_name[256];
 } access_info_t;
 
 // cấp quyền truy cập file cho 1 user
