@@ -30,7 +30,7 @@ void cmd_help(ParsedCommand *cmd) {
     // Print all supported command
     printf("Supported commands:\n\n");
 
-    for (int i = 0; commands[i].name != NULL; i++) {
+    for (int i = 0; i < 32; ++i) {
         printf("%-20s", commands[i].name);
 
         if ((i + 1) % 4 == 0) putchar('\n');

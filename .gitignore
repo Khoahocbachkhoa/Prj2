@@ -3,5 +3,6 @@ server/server.out
 server/*.key
 server/storage/*
 server/certs/*.key
+server/accounts.txt
 
 client/client.out

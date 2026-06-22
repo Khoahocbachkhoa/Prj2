@@ -14,6 +14,8 @@ typedef struct
 
 } Command;
 
+extern Command commands[];
+
 // dispatch parsed command cho một handle
 void command_dispatch(ParsedCommand *cmd);
 

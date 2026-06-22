@@ -5,7 +5,7 @@
 #include "../../include/command.h"
 #include "../../include/parser.h"
 
-static Command commands[] =
+Command commands[32] =
 {
     {"login",           cmd_login},
     {"logout",          cmd_logout},
@@ -51,8 +51,8 @@ static Command commands[] =
     {"bye",   cmd_exit},
     {"put", cmd_upload},
     {"get", cmd_download},
-
-    {NULL, NULL}
+    {"cwd", cmd_pwd},
+    {"del", cmd_delete}
 };
 
 void command_dispatch(ParsedCommand *cmd) {

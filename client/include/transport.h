@@ -2,13 +2,20 @@
 #define TRANSPORT_H
 
 #include <stdio.h>
+#include <unistd.h>
 
 // Wrap send và recv để mã hóa kênh truyền sau này
 ssize_t net_send(int sockfd, const void* buf, size_t len, int flag);
 
 ssize_t net_recv(int sockfd, void* buf,size_t len, int flag);
 
-// Gửi command và trả về kết quả luôn
+// Gửi command
 int send_command(int sockfd, const char *cmd);
+
+// Nhận phản hồi từ server
+int recv_response(int sockfd);
+
+// Nhận phản hồi từ server và ghi vào buf
+int recv_response_to_buf(int sockfd, char *buf, int buf_size);
 
 #endif
