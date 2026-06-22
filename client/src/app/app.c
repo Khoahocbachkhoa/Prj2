@@ -28,7 +28,7 @@ void init(int argc, char *argv[]) {
 }
 
 void shell_print_prompt() {
-    printf("%s:%s$ ", state->username, state->currentworkspace);
+    printf("%s @%s ~> ", state->username, state->cwd);
     fflush(stdout);
 }
 

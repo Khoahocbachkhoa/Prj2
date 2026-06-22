@@ -7,11 +7,52 @@
 
 static Command commands[] =
 {
-    {"login",  cmd_login},
-    {"logout", cmd_logout},
-    {"exit",   cmd_exit},
-    {"quit",   cmd_exit},
-    {"register", cmd_register}
+    {"login",           cmd_login},
+    {"logout",          cmd_logout},
+
+    {"register",        cmd_register},
+
+    {"pwd",             cmd_pwd},
+    {"ls",              cmd_list},
+    {"cd",              cmd_cd},
+
+    {"mkdir",           cmd_mkdir},
+    {"rm",              cmd_delete},
+    {"rmdir",           cmd_rmdir},
+    {"mv",              cmd_rename},
+
+    {"put",             cmd_upload},
+    {"get",             cmd_download},
+
+    {"share-file",      cmd_share_file},
+    {"unshare-file",    cmd_unshare_file},
+
+    {"share-folder",    cmd_share_folder},
+    {"unshare-folder",  cmd_unshare_folder},
+
+    {"file-acl",        cmd_list_user_access_file},
+    {"folder-acl",      cmd_list_user_access_folder},
+
+    {"shared-files",    cmd_list_share_file_with_me},
+    {"shared-folders",  cmd_list_share_folder_with_me},
+
+    {"get-shared",      cmd_download_shared},
+
+    {"open-shared",     cmd_open_shared_folder},
+    {"exit-shared",     cmd_exit_shared_folder},
+
+    {"help",            cmd_help},
+
+    {"exit",            cmd_exit},
+    {"quit",            cmd_exit},
+
+    // alias
+    {"dir",   cmd_list},
+    {"bye",   cmd_exit},
+    {"put", cmd_upload},
+    {"get", cmd_download},
+
+    {NULL, NULL}
 };
 
 void command_dispatch(ParsedCommand *cmd) {

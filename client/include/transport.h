@@ -8,4 +8,7 @@ ssize_t net_send(int sockfd, const void* buf, size_t len, int flag);
 
 ssize_t net_recv(int sockfd, void* buf,size_t len, int flag);
 
+// Gửi command và trả về kết quả luôn
+int send_command(int sockfd, const char *cmd);
+
 #endif

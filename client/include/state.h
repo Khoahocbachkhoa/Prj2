@@ -5,10 +5,8 @@
 
 typedef struct {
     bool is_logged_in;
-    
     char username[64];
-    char currentworkspace[64];
-
+    char cwd[64];
     int sockfd;
 } ClientState;
 
