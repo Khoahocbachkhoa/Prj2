@@ -1,7 +1,0 @@
-Tên:
-    register - đăng ký một tài khoản mới
-Cú pháp:
-    register --user [username]
-Mô tả:
-    Chỉ định tên người dùng và nhập mật khẩu để đăng ký tài khoản. Hiển thị thành công nếu đăng ký thành công, hoặc
-    thất bại nếu tên đăng nhập đã tồn tại hoặc mật khẩu không đủ mạnh

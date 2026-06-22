@@ -1,6 +1,0 @@
-Tên:
-    login - đăng nhập vào một tài khoản
-Cú pháp:
-    login --user [username]
-Mô tả:
-    Nhập tên đăng nhập và mật khẩu để đăng nhập.

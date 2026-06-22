@@ -1,6 +1,0 @@
-Tên:
-    logout - đăng xuất khỏi một tài khoản
-Cú pháp:
-    logout
-Mô tả:
-    Đăng xuất khỏi phiên hiện tại.
