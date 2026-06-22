@@ -49,8 +49,8 @@ Command commands[32] =
     // alias
     {"dir",   cmd_list},
     {"bye",   cmd_exit},
-    {"put", cmd_upload},
-    {"get", cmd_download},
+    {"upload", cmd_upload},
+    {"download", cmd_download},
     {"cwd", cmd_pwd},
     {"del", cmd_delete}
 };

@@ -9,6 +9,11 @@ ssize_t net_send(int sockfd, const void* buf, size_t len, int flag);
 
 ssize_t net_recv(int sockfd, void* buf,size_t len, int flag);
 
+// Đảm bảo gửi đủ dữ liệu
+ssize_t net_recv_all(int fd, void *buf, size_t len, int flag);
+
+ssize_t net_send_all(int fd, void *buf, size_t len, int flag);
+
 // Gửi command
 int send_command(int sockfd, const char *cmd);
 
