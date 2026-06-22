@@ -10,6 +10,7 @@
 
 void cmd_list_share_file_with_me(ParsedCommand *cmd) {
 
+
 }
 
 void cmd_list_share_folder_with_me(ParsedCommand *cmd) {
