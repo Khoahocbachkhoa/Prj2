@@ -47,3 +47,55 @@ int recv_response_to_buf(int sockfd, char *buf, int buf_size) {
 
     return n;
 }
+
+// Đọc phản hồi 1 dòng
+int recv_line(int sockfd, char *buf, size_t size) {
+    if (buf == NULL || size == 0)
+        return -1;
+
+    size_t pos = 0;
+
+    while (pos < size - 1) {
+        char c;
+        int n = net_recv(sockfd, &c, 1, 0);
+
+        if (n <= 0)
+            return -1;
+
+        buf[pos++] = c;
+
+        if (c == '\n')
+            break;
+    }
+
+    buf[pos] = '\0';
+
+    return (int)pos;
+}
+
+// Đọc và in liên tục cho tới khi gặp marker
+int recv_multiline_reponse(int sockfd, const char *marker) {
+    if (marker == NULL)
+        return -1;
+
+    char line[1024];
+
+    while (1) {
+        int n = recv_line(sockfd, line, sizeof(line));
+
+        if (n <= 0)
+            return -1;
+
+        /*
+         * "200 LIST_END"
+         * "200 LIST_SHARED_USERS_END"
+         */
+
+        if (strncmp(line, marker, strlen(marker)) == 0)
+            break;
+
+        printf("%s", line);
+    }
+
+    return 0;
+}

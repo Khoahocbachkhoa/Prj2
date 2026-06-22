@@ -27,3 +27,24 @@ bool check_folder_name(const char *fname) {
 
     return true;
 }
+
+bool check_file_name(const char *fname) {
+    if (fname == NULL)
+        return false;
+
+    size_t len = strlen(fname);
+
+    if (len == 0 || len > 255)
+        return false;
+
+    if (strcmp(fname, ".") == 0 ||
+        strcmp(fname, "..") == 0)
+        return false;
+
+    for (size_t i = 0; i < len; i++) {
+        if (fname[i] == '/')
+            return false;
+    }
+
+    return true;
+}

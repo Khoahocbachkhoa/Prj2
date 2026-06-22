@@ -10,7 +10,6 @@
 #include "../../include/state.h"
 #include "../../include/util.h"
 
-
 void cmd_pwd(ParsedCommand *cmd) {
     if (cmd->argc != 1) {
         printf("Usage: pwd\n");
@@ -18,6 +17,9 @@ void cmd_pwd(ParsedCommand *cmd) {
     }
 
     send_command(state->sockfd, "PWD\r\n");
+
+    // In phản hồi từ server
+    recv_response(state->sockfd);
 }
 
 void cmd_list(ParsedCommand *cmd) {
@@ -27,6 +29,26 @@ void cmd_list(ParsedCommand *cmd) {
     }
 
     send_command(state->sockfd, "LIST\r\n");
+
+    // In phản hồi từ server
+    // recv_response(state->sockfd);
+
+    // Nhận phản hồi từ server
+    char buf[512];
+    recv_response_to_buf(state->sockfd, buf, sizeof(buf));
+
+    // parse response
+    int code;
+    sscanf(buf, "%d", &code);
+
+    if (code != 200) {
+        // Error list
+        printf("%s", buf);
+        return;
+    }
+
+    // Doc nhieu dong cho toi khi gap 200 
+    recv_multiline_reponse(state->sockfd, "200 LIST_END\r\n");
 }
 
 void cmd_mkdir(ParsedCommand *cmd) {

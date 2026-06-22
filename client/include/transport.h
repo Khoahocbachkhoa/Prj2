@@ -15,6 +15,12 @@ int send_command(int sockfd, const char *cmd);
 // Nhận phản hồi từ server
 int recv_response(int sockfd);
 
+// Nhận phản hồi từ server (1 dòng)
+int recv_line(int sockfd, char *buf, size_t size);
+
+// Nhận phản hồi từ server (có thể có nhiều dòng) cho tới khi gặp marker
+int recv_multiline_reponse(int sockfd, const char *marker);
+
 // Nhận phản hồi từ server và ghi vào buf
 int recv_response_to_buf(int sockfd, char *buf, int buf_size);
 
