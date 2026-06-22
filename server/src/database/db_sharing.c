@@ -270,14 +270,10 @@ db_errror_code db_sharing_list_files_shared_with_me(int user_id, Entry *entries,
 
         snprintf(entries[i].name, sizeof(entries[i].name), "%s", PQgetvalue(res, i, 1));
 
-        snprintf(entries[i].owner,
-                sizeof(entries[i].owner),
-                "%s",
+        snprintf(entries[i].owner, sizeof(entries[i].owner), "%s",
                 PQgetvalue(res, i, 2));
 
-        snprintf(entries[i].updated_at,
-                sizeof(entries[i].updated_at),
-                "%s",
+        snprintf(entries[i].updated_at, sizeof(entries[i].updated_at), "%s",
                 PQgetvalue(res, i, 3));
     }
 
@@ -306,15 +302,9 @@ db_errror_code db_sharing_grant_folder_access(int folder_id, int user_id, char *
     char folder_id_str[16];
     char user_id_str[16];
 
-    snprintf(folder_id_str,
-             sizeof(folder_id_str),
-             "%d",
-             folder_id);
+    snprintf(folder_id_str, sizeof(folder_id_str), "%d", folder_id);
 
-    snprintf(user_id_str,
-             sizeof(user_id_str),
-             "%d",
-             user_id);
+    snprintf(user_id_str, sizeof(user_id_str), "%d", user_id);
 
     const char *params[3] = {
         folder_id_str,
@@ -334,8 +324,7 @@ db_errror_code db_sharing_grant_folder_access(int folder_id, int user_id, char *
     );
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        fprintf(stderr,
-                "Failed to grant folder access: %s\n",
+        fprintf(stderr, "Failed to grant folder access: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);
@@ -369,15 +358,9 @@ db_errror_code db_sharing_revoke_folder_access(
     char folder_id_str[16];
     char user_id_str[16];
 
-    snprintf(folder_id_str,
-             sizeof(folder_id_str),
-             "%d",
-             folder_id);
+    snprintf(folder_id_str, sizeof(folder_id_str), "%d", folder_id);
 
-    snprintf(user_id_str,
-             sizeof(user_id_str),
-             "%d",
-             user_id);
+    snprintf(user_id_str, sizeof(user_id_str), "%d", user_id);
 
     const char *params[2] = {
         folder_id_str,
@@ -396,8 +379,7 @@ db_errror_code db_sharing_revoke_folder_access(
     );
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        fprintf(stderr,
-                "Failed to revoke folder access: %s\n",
+        fprintf(stderr, "Failed to revoke folder access: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);
@@ -418,11 +400,7 @@ db_errror_code db_sharing_revoke_folder_access(
     return OK;
 }
 
-db_errror_code db_sharing_list_users_shared_folder(
-    int folder_id,
-    shared_user_t *users,
-    int *user_size
-) {
+db_errror_code db_sharing_list_users_shared_folder( int folder_id, shared_user_t *users, int *user_size) {
     if (users == NULL || user_size == NULL)
         return ERR;
 
@@ -440,10 +418,7 @@ db_errror_code db_sharing_list_users_shared_folder(
         "ORDER BY u.username;";
 
     char folder_id_str[16];
-    snprintf(folder_id_str,
-             sizeof(folder_id_str),
-             "%d",
-             folder_id);
+    snprintf(folder_id_str, sizeof(folder_id_str), "%d", folder_id);
 
     const char *params[1] = {
         folder_id_str
@@ -461,8 +436,7 @@ db_errror_code db_sharing_list_users_shared_folder(
     );
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-        fprintf(stderr,
-                "Failed to list shared folder users: %s\n",
+        fprintf(stderr, "Failed to list shared folder users: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);
@@ -482,15 +456,9 @@ db_errror_code db_sharing_list_users_shared_folder(
         const char *username = PQgetvalue(res, i, 0);
         const char *role     = PQgetvalue(res, i, 1);
 
-        snprintf(users[i].username,
-                 sizeof(users[i].username),
-                 "%s",
-                 username);
+        snprintf(users[i].username, sizeof(users[i].username), "%s", username);
 
-        snprintf(users[i].role,
-                 sizeof(users[i].role),
-                 "%s",
-                 role);
+        snprintf(users[i].role, sizeof(users[i].role), "%s", role);
     }
 
     PQclear(res);
@@ -499,11 +467,7 @@ db_errror_code db_sharing_list_users_shared_folder(
     return OK;
 }
 
-db_errror_code db_sharing_list_folders_shared_with_me(
-    int user_id,
-    Entry *entries,
-    int *len
-) {
+db_errror_code db_sharing_list_folders_shared_with_me( int user_id, Entry *entries, int *len) {
     if (entries == NULL || len == NULL) {
         return ERR;
     }
@@ -531,10 +495,7 @@ db_errror_code db_sharing_list_folders_shared_with_me(
 
     char user_id_str[16];
 
-    snprintf(user_id_str,
-             sizeof(user_id_str),
-             "%d",
-             user_id);
+    snprintf(user_id_str, sizeof(user_id_str), "%d", user_id);
 
     const char *params[1] = {
         user_id_str
@@ -552,8 +513,7 @@ db_errror_code db_sharing_list_folders_shared_with_me(
     );
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-        fprintf(stderr,
-                "Failed to list shared folders: %s\n",
+        fprintf(stderr, "Failed to list shared folders: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);
@@ -565,10 +525,7 @@ db_errror_code db_sharing_list_folders_shared_with_me(
     int rows = PQntuples(res);
 
     if (rows > *len) {
-        fprintf(stderr,
-                "Buffer too small (%d < %d)\n",
-                *len,
-                rows);
+        fprintf(stderr, "Buffer too small (%d < %d)\n", *len, rows);
 
         *len = rows;
 
@@ -580,30 +537,19 @@ db_errror_code db_sharing_list_folders_shared_with_me(
 
     for (int i = 0; i < rows; i++) {
 
-            entries[i].id =
-                atol(PQgetvalue(res, i, 0));
+            entries[i].id = atol(PQgetvalue(res, i, 0));
 
-            entries[i].type =
-                ENTRY_FOLDER;
+            entries[i].type = ENTRY_FOLDER;
 
-            snprintf(entries[i].name,
-                    sizeof(entries[i].name),
-                    "%s",
-                    PQgetvalue(res, i, 1));
+            snprintf(entries[i].name, sizeof(entries[i].name), "%s", PQgetvalue(res, i, 1));
 
-            snprintf(entries[i].owner,
-                    sizeof(entries[i].owner),
-                    "%s",
+            snprintf(entries[i].owner, sizeof(entries[i].owner), "%s",
                     PQgetvalue(res, i, 2));
 
-            snprintf(entries[i].role,
-                    sizeof(entries[i].role),
-                    "%s",
+            snprintf(entries[i].role, sizeof(entries[i].role), "%s",
                     PQgetvalue(res, i, 3));
 
-            snprintf(entries[i].updated_at,
-                    sizeof(entries[i].updated_at),
-                    "%s",
+            snprintf(entries[i].updated_at, sizeof(entries[i].updated_at), "%s",
                     PQgetvalue(res, i, 4));
         }
 
@@ -650,15 +596,9 @@ db_errror_code db_sharing_get_folder_access_info(int folder_id, access_info_t *i
     char folder_id_str[16];
     char user_id_str[16];
 
-    snprintf(folder_id_str,
-             sizeof(folder_id_str),
-             "%d",
-             folder_id);
+    snprintf(folder_id_str, sizeof(folder_id_str), "%d", folder_id);
 
-    snprintf(user_id_str,
-             sizeof(user_id_str),
-             "%d",
-             session->user_id);
+    snprintf(user_id_str, sizeof(user_id_str), "%d", session->user_id);
 
     const char *params[2] = {
         folder_id_str,
@@ -678,8 +618,7 @@ db_errror_code db_sharing_get_folder_access_info(int folder_id, access_info_t *i
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 
-        fprintf(stderr,
-                "db_sharing_get_folder_access_info: %s\n",
+        fprintf(stderr, "db_sharing_get_folder_access_info: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);
@@ -696,18 +635,12 @@ db_errror_code db_sharing_get_folder_access_info(int folder_id, access_info_t *i
         return DB_PERMISSION_DENIED;
     }
 
-    info->owner_id =
-        atoi(PQgetvalue(res, 0, 0));
+    info->owner_id = atoi(PQgetvalue(res, 0, 0));
 
-    snprintf(info->owner_name,
-             sizeof(info->owner_name),
-             "%s",
+    snprintf(info->owner_name, sizeof(info->owner_name), "%s",
              PQgetvalue(res, 0, 1));
 
-    snprintf(info->role,
-             sizeof(info->role),
-             "%s",
-             PQgetvalue(res, 0, 2));
+    snprintf(info->role, sizeof(info->role), "%s", PQgetvalue(res, 0, 2));
 
     snprintf(info->folder_name, sizeof(info->folder_name), "%s", PQgetvalue(res, 0, 3));
 

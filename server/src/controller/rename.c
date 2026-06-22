@@ -20,48 +20,33 @@ void handle_rename(int clientfd, const char *req, session_t *session) {
 
     if (ret != 3) {
         snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
     if (session->logged_in == 0) {
         snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
     int file_id;
 
-    ret = db_file_find_id_by_name( session->current_folder_id, old_name, &file_id);
+    ret = db_file_find_id_by_name(session->current_folder_id, old_name, &file_id);
 
     if (ret == OK) {
-
-        ret = db_file_rename(
-                file_id,
-                new_name);
+        // Gọi service đổi tên file
+        ret = db_file_rename(file_id, new_name);
 
         if (ret != OK) {
-            snprintf(res,
-                     sizeof(res),
-                     "500 ERROR_SERVER\r\n");
-
-            net_send(clientfd,
-                     res,
-                     strlen(res),
-                     0);
+            snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+            net_send(clientfd, res, strlen(res), 0);
             return;
         }
 
-        snprintf(res,
-                 sizeof(res),
-                 "200 RENAME_SUCCESS\r\n");
+        snprintf(res, sizeof(res), "200 RENAME_SUCCESS\r\n");
+        net_send(clientfd, res, strlen(res), 0);
 
-        net_send(clientfd,
-                 res,
-                 strlen(res),
-                 0);
         return;
     }
 
@@ -73,40 +58,22 @@ void handle_rename(int clientfd, const char *req, session_t *session) {
             &folder_id);
 
     if (ret == OK) {
-
-        ret = db_folder_rename(
-                folder_id,
-                new_name);
+        // Gọi service đổi tên folder
+        ret = db_folder_rename(folder_id, new_name);
 
         if (ret != OK) {
-            snprintf(res,
-                     sizeof(res),
-                     "500 ERROR_SERVER\r\n");
+            snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+            net_send(clientfd, res, strlen(res), 0);
 
-            net_send(clientfd,
-                     res,
-                     strlen(res),
-                     0);
             return;
         }
 
-        snprintf(res,
-                 sizeof(res),
-                 "200 RENAME_SUCCESS\r\n");
+        snprintf(res, sizeof(res), "200 RENAME_SUCCESS\r\n");
+        net_send(clientfd, res, strlen(res), 0);
 
-        net_send(clientfd,
-                 res,
-                 strlen(res),
-                 0);
         return;
     }
 
-    snprintf(res,
-             sizeof(res),
-             "404 RESOURCE_NOT_FOUND\r\n");
-
-    net_send(clientfd,
-             res,
-             strlen(res),
-             0);
+    snprintf(res, sizeof(res), "404 RESOURCE_NOT_FOUND\r\n");
+    net_send(clientfd, res, strlen(res), 0);
 }

@@ -11,14 +11,12 @@ void handle_exit_shared(int clientfd, const char *req, session_t *session) {
 
     if (session->logged_in == 0) {
         snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
     if (session->in_sharing_mode == 0) {
         snprintf(res, sizeof(res), "409 NOT_IN_SHARED_MODE\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
@@ -40,12 +38,7 @@ void handle_exit_shared(int clientfd, const char *req, session_t *session) {
 
     session->old_folder_id = 0;
 
-    snprintf(res,
-             sizeof(res),
-             "200 EXIT_SHARED_SUCCESS\r\n");
+    snprintf(res, sizeof(res), "200 EXIT_SHARED_SUCCESS\r\n");
 
-    net_send(clientfd,
-             res,
-             strlen(res),
-             0);
+    net_send(clientfd, res, strlen(res), 0);
 }

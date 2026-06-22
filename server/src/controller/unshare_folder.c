@@ -21,30 +21,26 @@ void handle_unshare_folder(int clientfd, const char *req, session_t *session) {
     int folder_id;
     int ret;
 
-    ret = sscanf(req,
-                 "%31s %255s %255s",
-                 cmd,
-                 foldername,
-                 username);
+    ret = sscanf(req, "%s %s %s\r\n", cmd, foldername, username);
 
     if (ret != 3) {
-        snprintf(res, sizeof(res),
-                 "400 BAD_REQUEST\r\n");
+        snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
     if (session->logged_in == 0) {
-        snprintf(res, sizeof(res),
-                 "401 NOT_LOGIN_YET\r\n");
+        snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
     if (session->in_sharing_mode == 1) {
-        snprintf(res, sizeof(res),
-                 "403 ACCESS_DENIED\r\n");
+        snprintf(res, sizeof(res), "403 ACCESS_DENIED\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
@@ -52,16 +48,16 @@ void handle_unshare_folder(int clientfd, const char *req, session_t *session) {
     ret = db_user_find_id_by_username(username, &user_id);
 
     if (ret == DB_USER_NOT_FOUND) {
-        snprintf(res, sizeof(res),
-                 "404 USER_NOT_FOUND\r\n");
+        snprintf(res, sizeof(res), "404 USER_NOT_FOUND\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
     if (ret == ERR) {
-        snprintf(res, sizeof(res),
-                 "500 ERROR_SERVER\r\n");
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
@@ -72,16 +68,16 @@ void handle_unshare_folder(int clientfd, const char *req, session_t *session) {
             &folder_id);
 
     if (ret == DB_FOLDER_NOT_FOUND) {
-        snprintf(res, sizeof(res),
-                 "404 FOLDER_NOT_FOUND\r\n");
+        snprintf(res, sizeof(res), "404 FOLDER_NOT_FOUND\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
     if (ret == ERR) {
-        snprintf(res, sizeof(res),
-                 "500 ERROR_SERVER\r\n");
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
@@ -89,25 +85,19 @@ void handle_unshare_folder(int clientfd, const char *req, session_t *session) {
     ret = db_sharing_revoke_folder_access(folder_id, user_id);
 
     if (ret == DB_SHARING_NOT_FOUND) {
-        snprintf(res, sizeof(res),
-                 "404 SHARE_NOT_FOUND\r\n");
+        snprintf(res, sizeof(res), "404 SHARE_NOT_FOUND\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
     if (ret == ERR) {
-        snprintf(res, sizeof(res),
-                 "500 ERROR_SERVER\r\n");
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
-    snprintf(res,
-             sizeof(res),
-             "200 UNSHARE_FOLDER_SUCCESS\r\n");
-
-    net_send(clientfd,
-             res,
-             strlen(res),
-             0);
+    snprintf(res, sizeof(res), "200 UNSHARE_FOLDER_SUCCESS\r\n");
+    net_send(clientfd, res, strlen(res), 0);
 }

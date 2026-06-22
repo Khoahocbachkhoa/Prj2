@@ -306,10 +306,7 @@ db_errror_code db_file_get_storage_key_by_id(int file_id, char *storage_key, int
         "WHERE id = $1";
 
     char file_id_str[16];
-    snprintf(file_id_str,
-             sizeof(file_id_str),
-             "%d",
-             file_id);
+    snprintf(file_id_str, sizeof(file_id_str), "%d", file_id);
 
     const char *params[1] = {
         file_id_str
@@ -327,12 +324,11 @@ db_errror_code db_file_get_storage_key_by_id(int file_id, char *storage_key, int
     );
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-        fprintf(stderr,
-                "Failed to get storage key: %s\n",
-                PQerrorMessage(conn));
-
+        fprintf(stderr, "Failed to get storage key: %s\n", PQerrorMessage(conn));
+        
         PQclear(res);
         db_release(conn);
+
         return ERR;
     }
 
@@ -342,10 +338,7 @@ db_errror_code db_file_get_storage_key_by_id(int file_id, char *storage_key, int
         return DB_FILE_NOT_FOUND;
     }
 
-    snprintf(storage_key,
-             storage_key_size,
-             "%s",
-             PQgetvalue(res, 0, 0));
+    snprintf(storage_key, storage_key_size, "%s", PQgetvalue(res, 0, 0));
 
     PQclear(res);
     db_release(conn);
@@ -367,10 +360,7 @@ db_errror_code db_file_soft_delete(int file_id) {
 
     char file_id_str[16];
 
-    snprintf(file_id_str,
-             sizeof(file_id_str),
-             "%d",
-             file_id);
+    snprintf(file_id_str, sizeof(file_id_str), "%d", file_id);
 
     const char *params[1] = {
         file_id_str
@@ -388,10 +378,8 @@ db_errror_code db_file_soft_delete(int file_id) {
     );
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-
-        fprintf(stderr,
-                "soft delete file failed: %s\n",
-                PQerrorMessage(conn));
+        fprintf(stderr, "soft delete file failed: %s\n",
+            PQerrorMessage(conn));
 
         PQclear(res);
         db_release(conn);
@@ -426,10 +414,7 @@ db_errror_code db_file_rename(int file_id, const char *new_name) {
 
     char file_id_str[16];
 
-    snprintf(file_id_str,
-             sizeof(file_id_str),
-             "%d",
-             file_id);
+    snprintf(file_id_str, sizeof(file_id_str), "%d", file_id);
 
     const char *params[2] = {
         file_id_str,
@@ -448,9 +433,7 @@ db_errror_code db_file_rename(int file_id, const char *new_name) {
     );
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-
-        fprintf(stderr,
-                "db_file_rename failed: %s\n",
+        fprintf(stderr, "db_file_rename failed: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);

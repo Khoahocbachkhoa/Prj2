@@ -21,15 +21,15 @@ void handle_rmdir(int clientfd, const char *req, session_t *session) {
 
     if (ret != 2) {
         snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
     if (session->logged_in == 0) {
         snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
@@ -37,16 +37,15 @@ void handle_rmdir(int clientfd, const char *req, session_t *session) {
 
     if (ret == DB_FOLDER_NOT_FOUND) {
         snprintf(res, sizeof(res), "404 FOLDER_NOT_FOUND\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
     if (ret != OK) {
-
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 
@@ -55,42 +54,28 @@ void handle_rmdir(int clientfd, const char *req, session_t *session) {
 
     if (ret != OK) {
 
-        snprintf(res,
-                 sizeof(res),
-                 "500 ERROR_SERVER\r\n");
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+        net_send(clientfd, res, strlen(res), 0);
 
-        net_send(clientfd,
-                 res,
-                 strlen(res),
-                 0);
         return;
     }
 
     if (ret == DB_FOLDER_NOT_EMPTY) {
         snprintf(res, sizeof(res), "400 FOLDER_NOT_EMPTY\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+
+        return;
     }
 
     ret = db_folder_soft_delete(folder_id);
 
     if (ret != OK) {
+        snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
+        net_send(clientfd, res, strlen(res), 0);
 
-        snprintf(res,
-                 sizeof(res),
-                 "500 ERROR_SERVER\r\n");
-
-        net_send(clientfd,
-                 res,
-                 strlen(res),
-                 0);
         return;
     }
 
-    snprintf(res,
-             sizeof(res),
-             "200 RMDIR_SUCCESS\r\n");
-
-    net_send(clientfd,
-             res,
-             strlen(res),
-             0);
+    snprintf(res, sizeof(res), "200 RMDIR_SUCCESS\r\n");
+    net_send(clientfd, res, strlen(res), 0);
 }

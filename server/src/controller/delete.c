@@ -20,20 +20,13 @@ void handle_delete(int clientfd, const char *req, session_t *session) {
 
     if (ret != 2) {
         snprintf(res, sizeof(res), "400 BAD_REQUEST\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
     if (session->logged_in == 0) {
-        snprintf(res,
-                 sizeof(res),
-                 "401 NOT_LOGIN_YET\r\n");
-
-        net_send(clientfd,
-                 res,
-                 strlen(res),
-                 0);
+        snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
+        net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
@@ -42,14 +35,12 @@ void handle_delete(int clientfd, const char *req, session_t *session) {
 
     if (ret == DB_FILE_NOT_FOUND) {
         snprintf(res, sizeof(res), "404 FILE_NOT_FOUND\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
 
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
-
         net_send(clientfd,  res,  strlen(res), 0);
         return;
     }
@@ -58,7 +49,6 @@ void handle_delete(int clientfd, const char *req, session_t *session) {
 
     if (ret != OK) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }

@@ -31,7 +31,6 @@ void handle_download_share(int clientfd, const char *req, session_t *session) {
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
-        //printf("Here 1\n");
         return;
     } else if (ret == DB_PERMISSION_DENIED) {
         snprintf(res, sizeof(res), "403 ACCESS_DENIED\r\n");
@@ -44,7 +43,6 @@ void handle_download_share(int clientfd, const char *req, session_t *session) {
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);
-        //printf("Here 2\n");
         return;
     } 
 

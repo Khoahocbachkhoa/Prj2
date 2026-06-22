@@ -407,10 +407,7 @@ db_errror_code db_folder_is_empty(int folder_id) {
         ");";
 
     char folder_id_str[16];
-    snprintf(folder_id_str,
-             sizeof(folder_id_str),
-             "%d",
-             folder_id);
+    snprintf(folder_id_str,  sizeof(folder_id_str), "%d", folder_id);
 
     const char *params[1] = {
         folder_id_str
@@ -428,8 +425,7 @@ db_errror_code db_folder_is_empty(int folder_id) {
     );
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-        fprintf(stderr,
-                "db_folder_is_empty: %s\n",
+        fprintf(stderr, "db_folder_is_empty: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);
@@ -469,10 +465,7 @@ db_errror_code db_folder_soft_delete(int folder_id) {
 
     char folder_id_str[16];
 
-    snprintf(folder_id_str,
-             sizeof(folder_id_str),
-             "%d",
-             folder_id);
+    snprintf(folder_id_str, sizeof(folder_id_str), "%d", folder_id);
 
     const char *params[1] = {
         folder_id_str
@@ -490,8 +483,7 @@ db_errror_code db_folder_soft_delete(int folder_id) {
     );
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        fprintf(stderr,
-                "db_folder_soft_delete: %s\n",
+        fprintf(stderr, "db_folder_soft_delete: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);
@@ -534,10 +526,7 @@ db_errror_code db_folder_rename(int folder_id, const char *new_name) {
 
     char folder_id_str[16];
 
-    snprintf(folder_id_str,
-             sizeof(folder_id_str),
-             "%d",
-             folder_id);
+    snprintf(folder_id_str, sizeof(folder_id_str), "%d", folder_id);
 
     const char *params[2] = {
         folder_id_str,
@@ -557,9 +546,7 @@ db_errror_code db_folder_rename(int folder_id, const char *new_name) {
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 
-        const char *sqlstate =
-            PQresultErrorField(res,
-                               PG_DIAG_SQLSTATE);
+        const char *sqlstate = PQresultErrorField(res, PG_DIAG_SQLSTATE);
 
         if (sqlstate &&
             strcmp(sqlstate, "23505") == 0) {
@@ -570,8 +557,7 @@ db_errror_code db_folder_rename(int folder_id, const char *new_name) {
             return DB_FOLDER_EXISTS;
         }
 
-        fprintf(stderr,
-                "db_folder_rename failed: %s\n",
+        fprintf(stderr, "db_folder_rename failed: %s\n",
                 PQerrorMessage(conn));
 
         PQclear(res);

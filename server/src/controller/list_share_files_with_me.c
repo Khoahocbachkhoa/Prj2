@@ -20,15 +20,10 @@ void handle_list_shared_files_with_me(int clientfd, const char *req, session_t *
     Entry entries[256];
     int n = 256;
 
-    ret = db_sharing_list_files_shared_with_me(
-        session->user_id,
-        entries,
-        &n
-    );
+    ret = db_sharing_list_files_shared_with_me(session->user_id, entries, &n );
 
     if (ret != OK) {
         snprintf(res, sizeof(res),"500 ERR_SERVER\r\n");
-
         net_send(clientfd, res, strlen(res), 0);
         return;
     }
@@ -40,20 +35,12 @@ void handle_list_shared_files_with_me(int clientfd, const char *req, session_t *
 
     for (int i = 0; i < n; i++) {
 
-        snprintf(buf,
-                 sizeof(buf),
-                 "Files id:%ld %s %s\r\n",
-                 entries[i].id,
-                 entries[i].name,
-                 entries[i].owner);
+        snprintf(buf, sizeof(buf), "Files id:%ld %s %s\r\n", 
+                entries[i].id, entries[i].name, entries[i].owner);
 
-        net_send(clientfd,
-                 buf,
-                 strlen(buf),
-                 0);
+        net_send(clientfd, buf, strlen(buf), 0);
     }
 
     snprintf(res, sizeof(res), "200 LIST_SHARED_WITH_ME_END\r\n");
-
     net_send(clientfd, res, strlen(res), 0);
 }
