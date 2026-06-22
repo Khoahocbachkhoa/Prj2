@@ -117,7 +117,6 @@ db_errror_code file_service_download_by_file_id(int clientfd, int fid, session_t
 
     ret = db_permission_check_access_file(session->user_id, fid);
     if (ret != OK) {
-        //printf("Here 1\n");
         return ERR;
     }
     
@@ -125,7 +124,6 @@ db_errror_code file_service_download_by_file_id(int clientfd, int fid, session_t
     FileMeta meta;
     ret = db_file_find_by_id(fid, &meta);
     if (ret != OK) {
-        //printf("Here 2\n");
         return ret;
     }
 
@@ -143,7 +141,6 @@ db_errror_code file_service_download_by_file_id(int clientfd, int fid, session_t
     bool ok = storage_send_file(path, clientfd, meta.size);
 
     if (!ok) {
-        //printf("here 3\n");
         return ERR;
     }
 

@@ -30,6 +30,14 @@ void handle_delete(int clientfd, const char *req, session_t *session) {
         return;
     }
 
+    // Kiểm tra quyền
+    if (session->in_sharing_mode == 1 && session->role == ROLE_VIEWER) {
+        snprintf(res, sizeof(res), "403 ACCESS_DENIED\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+
+        return;
+    }
+
     /* Tìm file trong thư mục hiện tại */
     ret = db_file_find_id_by_name(session->current_folder_id, filename, &file_id);
 

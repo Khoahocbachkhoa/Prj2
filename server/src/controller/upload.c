@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../../include/client.h"
 #include "../../include/protocols.h"
 #include "../../include/transport.h"
 #include "../../include/database.h"
@@ -24,6 +25,14 @@ void handle_upload(int clientfd, const char *req, session_t *session) {
     if (session->logged_in == 0) {
         snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
         net_send(clientfd, res, strlen(res), 0);
+        return;
+    }
+
+    // Kiểm tra quyền
+    if (session->in_sharing_mode == 1 && session->role == ROLE_VIEWER) {
+        snprintf(res, sizeof(res), "403 ACCESS_DENIED\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+
         return;
     }
 

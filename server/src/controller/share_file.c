@@ -32,6 +32,14 @@ void handle_share_file(int clientfd, const char *req, session_t *session) {
         return;
     }
 
+    // Kiểm tra quyền
+    if (session->in_sharing_mode == 1 && session->role == ROLE_VIEWER) {
+        snprintf(res, sizeof(res), "403 ACCESS_DENIED\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+
+        return;
+    }
+
     // Không được chia sẻ file nếu không phải chủ sỡ hữu
     if (session->in_sharing_mode == 1) {
         snprintf(res, sizeof(res), "403 ACCESS_DENIED\r\n");

@@ -29,6 +29,14 @@ void handle_mkdir(int clientfd, const char *req, session_t* session) {
         return;
     }
 
+    // Kiểm tra quyền
+    if (session->in_sharing_mode == 1 && session->role == ROLE_VIEWER) {
+        snprintf(res, sizeof(res), "403 ACCESS_DENIED\r\n");
+        net_send(clientfd, res, strlen(res), 0);
+
+        return;
+    }
+
     if (!folder_service_check_fname(dir)) {
         snprintf(res, sizeof(res), "422 INVALID_FOLDER_NAME\r\n");
         net_send(clientfd, res, strlen(res), 0);
