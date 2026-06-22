@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <pwd.h>
+#include <unistd.h>
 
 #include "../../include/parser.h"
 #include "../../include/util.h"

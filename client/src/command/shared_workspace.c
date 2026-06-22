@@ -111,8 +111,7 @@ void cmd_exit_shared_folder(ParsedCommand *cmd) {
 
     char req[512];
 
-    snprintf(req, sizeof(req), "EXIT_SHARED\r\n",
-            cmd->argv[1]);
+    snprintf(req, sizeof(req), "EXIT_SHARED\r\n");
 
     send_command(state->sockfd, req);
     recv_response(state->sockfd);

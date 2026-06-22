@@ -11,6 +11,10 @@
 #include "../../include/command.h"
 
 void init(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Usage: ./clinet server_address port\n");
+        return;
+    }
     // parse ip and server port from argv
     char ip[32];
     int port = atoi(argv[2]);

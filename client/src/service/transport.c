@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <stdio.h>
 #include <string.h>
+#include <pwd.h>
 
 #include "../../include/transport.h"
 
@@ -31,6 +32,7 @@ int recv_response(int sockfd) {
 
     buf[n] = '\0';
     printf("%s", buf);
+    return 0;
 }
 
 // Đọc phản hồi vào buf
@@ -38,7 +40,8 @@ int recv_response_to_buf(int sockfd, char *buf, int buf_size) {
     if (buf == NULL || buf_size <= 1)
         return -1;
 
-    int n = net_recv(sockfd, buf, buf_size - 1, 0);
+    // int n = net_recv(sockfd, buf, buf_size - 1, 0);
+    int n = recv_line(sockfd, buf, buf_size - 1);
 
     if (n <= 0)
         return -1;
