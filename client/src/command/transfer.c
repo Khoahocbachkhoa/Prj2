@@ -9,7 +9,12 @@
 #include "../../include/state.h"
 
 void cmd_upload(ParsedCommand *cmd) {
+    if (cmd->argc == 1) {
+        printf("Usage: put --path path_to_file\n");
+        return;
+    }
 
+    
 }
 
 void cmd_download(ParsedCommand *cmd) {

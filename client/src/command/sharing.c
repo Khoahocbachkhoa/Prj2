@@ -62,7 +62,7 @@ void cmd_share_folder(ParsedCommand *cmd) {
 }
 
 void cmd_unshare_folder(ParsedCommand *cmd) {
-    if (cmd->argc != 4) {
+    if (cmd->argc != 3) {
         printf("Usage: unshare-folder <folder> <username>\n");
         return;
     }
