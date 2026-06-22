@@ -41,7 +41,7 @@ void cmd_unshare_file(ParsedCommand *cmd) {
 void cmd_share_folder(ParsedCommand *cmd) {
     if (cmd->argc != 4) {
         printf("Usage: share-folder <folder> <username> <role>\n");
-        printf("Role must be 'viewer' or 'editor'");
+        printf("Role must be 'viewer' or 'editor'\n");
         return;
     }
 

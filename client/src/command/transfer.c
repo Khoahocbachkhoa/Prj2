@@ -146,7 +146,7 @@ void cmd_download(ParsedCommand *cmd) {
     long filesize;
 
     // ko co filesize -> co error
-    if (sscanf(res, "%d %s %ld\r\n", &code, message, &filesize) != 3 || code != 150) {
+    if (sscanf(res, "%d %s %ld\r\n", &code, message, &filesize) != 3 || code != 50) {
         printf("%s", res);
         return;
     }
@@ -247,7 +247,7 @@ void cmd_download_shared(ParsedCommand *cmd) {
     long filesize;
 
     // Có lỗi xảy ra khi không có file_size
-    if (sscanf(res, "%d %s %ld\r\n", &code, message, &filesize) != 3 || code != 150) {
+    if (sscanf(res, "%d %s %ld\r\n", &code, message, &filesize) != 3 || code != 50) {
         printf("%s", res);
         return;
     }
