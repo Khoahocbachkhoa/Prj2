@@ -44,8 +44,13 @@ void handle_register(int clientfd, const char *req) {
         return;
     }
 
+    // Băm mật khẩu bằng SHA256
+    char hash[65];
+
+    password_hash(password, hash);
+
     // Tạo user mới
-    ret = db_user_insert(username, password);
+    ret = db_user_insert(username, hash);
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);

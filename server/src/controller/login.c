@@ -10,6 +10,7 @@
 #include "../../include/client.h"
 #include "../../include/db_auth.h"
 #include "../../include/db_folder.h"
+#include "../../include/security.h"
 
 void handle_login(int clientfd, const char *req, session_t *session) {
     char cmd[16];
@@ -37,7 +38,11 @@ void handle_login(int clientfd, const char *req, session_t *session) {
         return;
     }
 
-    ret = db_check_login(username, password, id);
+    // Băm mật khẩu
+    char hash[256];
+    password_hash(password, hash);
+
+    ret = db_check_login(username, hash, id);
     if (ret == ERR) {
         snprintf(res, sizeof(res), "500 ERROR_SERVER\r\n");
         net_send(clientfd, res, strlen(res), 0);

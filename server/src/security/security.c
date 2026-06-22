@@ -1,5 +1,6 @@
 #include <string.h>
 #include <ctype.h>
+#include <openssl/sha.h>
 
 #include "../../include/security.h"
 
@@ -38,4 +39,22 @@ password_status check_password(const char *pass) {
     }
 
     return (has_upper && has_lower && has_digit && has_special) ? PASSWORD_STRONG : PASSWORD_WEAK;
+}
+
+int password_hash(const char *password, char hash_hex[65]) {
+    unsigned char digest[SHA256_DIGEST_LENGTH];
+
+    SHA256(
+        (const unsigned char *)password,
+        strlen(password),
+        digest
+    );
+
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        sprintf(hash_hex + (i * 2), "%02x", digest[i]);
+    }
+
+    hash_hex[64] = '\0';
+
+    return 0;
 }

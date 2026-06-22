@@ -7,7 +7,11 @@ typedef enum {
     PASSWORD_STRONG
 } password_status;
 
+
 // Kiểm tra độ mạnh của một mật khẩu
 password_status check_password(const char *pass);
+
+// Băm mật khẩu
+int password_hash(const char *password, char hash_hex[65]);
 
 #endif
