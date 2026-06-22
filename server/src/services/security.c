@@ -1,5 +1,6 @@
 #include <string.h>
 #include <ctype.h>
+#include <stdio.h>
 #include <openssl/sha.h>
 
 #include "../../include/security.h"

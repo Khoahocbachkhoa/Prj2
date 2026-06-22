@@ -68,7 +68,7 @@ void handle_register(int clientfd, const char *req) {
     // Tạo thư mục mới trên đĩa cho user
     char path[256];
     snprintf(path, sizeof(path), "./storage/%s", username);
-    mkdir(path, 0755);
+    // mkdir(path, 0755);
 
     // Tạo user mới và thêm folder lưu trữ thành công
     snprintf(res, sizeof(res), "200 REGISTER_SUCCESS\r\n");
