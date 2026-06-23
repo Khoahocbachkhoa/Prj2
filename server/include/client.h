@@ -14,7 +14,7 @@ typedef struct {
     SSL *ssl;
 } ClientContext;
 
-static SSL *g_ssl_table[MAX_CLIENT];
+extern SSL *g_ssl_table[MAX_CLIENT];
 
 typedef struct {
     int logged_in;

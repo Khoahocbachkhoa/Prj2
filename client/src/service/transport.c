@@ -7,6 +7,7 @@
 #include "../../include/transport.h"
 #include "../../include/tls_client.h"
 #include "../../include/state.h"
+#include <openssl/ssl.h>
 
 // todo : sau này thêm chức năng mã hóa kênh truyền
 // ssize_t net_send(int sockfd, const void* buf, size_t len, int flag) {

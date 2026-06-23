@@ -7,6 +7,8 @@
 #include "../../include/protocols.h"
 #include "../../include/transport.h"
 
+SSL *g_ssl_table[MAX_CLIENT];
+
 void handle_client(int clientfd, SSL *ssl) {
     session_t session;
     memset(&session, 0, sizeof(session));

@@ -58,6 +58,7 @@ void cmd_login(ParsedCommand *cmd) {
     } else if (code == 400) {
         printf("Error: bad request!\n");
     } else {
+        printf("%d\n", code);
         printf("Error: unknown server errror!\n");
     }
 
