@@ -10,6 +10,7 @@
 void handle_list_shared_files_with_me(int clientfd, const char *req, session_t *session) {
     char res[256];
     int ret;
+    (void)req;
 
     if (session->logged_in == 0) {
         snprintf(res, sizeof(res), "401 NOT_LOGIN_YET\r\n");
