@@ -46,7 +46,7 @@ psql -U postgres
 Tạo database:
 
 ```sql
-CREATE DATABASE file_sharing_db;
+CREATE DATABASE file_db;
 ```
 
 Thoát:
@@ -58,19 +58,13 @@ Thoát:
 ### Import schema
 
 ```bash
-psql -U postgres -d file_sharing_db -f schema.sql
+psql -U postgres -d file_db -f schema.sql
 ```
 
 Kiểm tra:
 
 ```bash
-psql -U postgres -d file_sharing_db
-```
-
-Liệt kê bảng:
-
-```sql
-\dt
+psql -U postgres -d file_db
 ```
 
 ---
