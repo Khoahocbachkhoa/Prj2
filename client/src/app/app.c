@@ -9,6 +9,7 @@
 #include "../../include/state.h"
 #include "../../include/parser.h"
 #include "../../include/command.h"
+#include "../../include/tls_client.h"
 
 void init(int argc, char *argv[]) {
     if (argc != 3) {
@@ -26,6 +27,12 @@ void init(int argc, char *argv[]) {
 
     // connect to server
     int sockfd = connect_to_server(ip, port);
+
+    state->sockfd = sockfd;
+
+    state->ssl_ctx = tls_client_ctx_create();
+
+    state->ssl = tls_connect(state->ssl_ctx, state->sockfd);
     
     init_state(state, sockfd);
     printf("Welcome to client shell!\nType help to information!\nType quit to quit\n");

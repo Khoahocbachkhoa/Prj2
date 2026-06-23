@@ -2,7 +2,9 @@ server/.env
 server/server.out
 server/*.key
 server/storage/*
-server/certs/*.key
+certs/*.key
 server/accounts.txt
 
 client/client.out
+client.out
+server.out

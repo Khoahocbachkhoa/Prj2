@@ -7,6 +7,7 @@
 
 #include "../../include/server.h"
 #include "../../include/client.h"
+#include "../../include/tls_server.h"
 
 #define LISTENQ 100
 
@@ -54,35 +55,49 @@ void start_server(int port) {
 
     printf("Server listening on port %d...\n", port);
 
+    // tạo context tls
+    SSL_CTX *ctx = tls_server_ctx_create();
+
     // luồng mới xử lý client
     while (1) {
-        int *clientfd = malloc(sizeof(int));
+        ClientContext *ctx_client = malloc(sizeof(ClientContext));
 
-        if (clientfd == NULL) {
-            perror("server.c: malloc errror!");
+        if (ctx_client == NULL) {
+            perror("malloc");
             continue;
         }
 
-        clilen = sizeof(cliaddr);
-        *clientfd = accept(sockfd, (struct sockaddr*)&cliaddr, &clilen);
+        ctx_client->clientfd = accept(sockfd, (struct sockaddr*)&cliaddr, &clilen);
 
-        if (*clientfd < 0) {
-            perror("server.c: Accept error!");
-            free(clientfd);
+        if (ctx_client->clientfd < 0) {
+            perror("accept");
             continue;
         }
+
+        ctx_client->ssl = tls_accept(ctx, ctx_client->clientfd);
+        
+        if (ctx_client->ssl == NULL) {
+            printf("TLS handshake failed\n");
+
+            close(ctx_client->clientfd);
+            free(ctx_client);
+
+            continue;
+        }
+
+        g_ssl_table[ctx_client->clientfd] = ctx_client->ssl;
 
         // In ra client kết nối
         char ip[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &cliaddr.sin_addr, ip, sizeof(ip));
         printf("Client connected: %s:%d\n", ip, ntohs(cliaddr.sin_port));
 
-        int ret = pthread_create(&tid, NULL, client_thread, clientfd);
+        int ret = pthread_create(&tid, NULL, client_thread, ctx_client);
         if (ret != 0) {
             fprintf(stderr, "server.c: pthread_create error: %s\n", strerror(ret));
 
-            close(*clientfd);
-            free(clientfd);
+            close(ctx_client->clientfd);
+            free(ctx_client);
 
             continue;
         }
@@ -91,12 +106,17 @@ void start_server(int port) {
     }
 }
 
-void* client_thread(void *arg) {
-    int clientfd = *((int*)arg);
-    free(arg);
+void *client_thread(void *arg) {
+    ClientContext *ctx = arg;
 
-    handle_client(clientfd);
+    handle_client(ctx->clientfd, ctx->ssl);
 
-    close(clientfd);
+    SSL_shutdown(ctx->ssl);
+    SSL_free(ctx->ssl);
+
+    close(ctx->clientfd);
+
+    free(ctx);
+
     return NULL;
 }

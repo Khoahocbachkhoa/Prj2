@@ -7,7 +7,7 @@
 #include "../../include/protocols.h"
 #include "../../include/transport.h"
 
-void handle_client(int clientfd) {
+void handle_client(int clientfd, SSL *ssl) {
     session_t session;
     memset(&session, 0, sizeof(session));
 
@@ -18,6 +18,8 @@ void handle_client(int clientfd) {
     session.in_sharing_mode = 0;
     session.share_root_folder_id = -1;
     session.old_folder_id = -1;
+
+    session.ssl = ssl;
 
     char buf[BUFSIZ];
     char cmd[32];
@@ -85,4 +87,10 @@ void handle_client(int clientfd) {
             handle_unsupported(clientfd, buf, &session);
         }
     }
+
+    // Khi client disconnect
+    SSL_shutdown(ssl);
+    SSL_free(ssl);
+
+    g_ssl_table[clientfd] = NULL;
 }

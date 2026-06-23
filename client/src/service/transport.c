@@ -5,14 +5,25 @@
 #include <pwd.h>
 
 #include "../../include/transport.h"
+#include "../../include/tls_client.h"
+#include "../../include/state.h"
 
 // todo : sau này thêm chức năng mã hóa kênh truyền
+// ssize_t net_send(int sockfd, const void* buf, size_t len, int flag) {
+//     return send(sockfd, buf, len, flag);
+// }
+
+// ssize_t net_recv(int sockfd, void *buf, size_t len, int flag) {
+//     return recv(sockfd, buf, len, flag);
+// }
+
+// Thêm TLS
 ssize_t net_send(int sockfd, const void* buf, size_t len, int flag) {
-    return send(sockfd, buf, len, flag);
+    return SSL_write(state->ssl, buf, len);
 }
 
 ssize_t net_recv(int sockfd, void *buf, size_t len, int flag) {
-    return recv(sockfd, buf, len, flag);
+    return SSL_read(state->ssl, buf, len);
 }
 
 int send_command(int sockfd, const char *cmd) {

@@ -1,10 +1,20 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#define MAX_CLIENT 1024
+
+#include "tls_server.h"
 typedef enum {
     ROLE_EDITOR,
     ROLE_VIEWER
 } share_role_t;
+
+typedef struct {
+    int clientfd;
+    SSL *ssl;
+} ClientContext;
+
+static SSL *g_ssl_table[MAX_CLIENT];
 
 typedef struct {
     int logged_in;
@@ -25,9 +35,11 @@ typedef struct {
     long share_root_folder_id; // Thư mục gốc của phân quyền
     long old_folder_id; // Thu muc truoc khi kia khi dang khong o trong sharing mode
     char share_cwd[256]; // Thu muc hien tai khi dang o trong che do chia se
+
+    SSL *ssl;
 } session_t;
 
 // Xử lý request của client
-void handle_client(int clientfd);
+void handle_client(int clientfd, SSL *ssl);
 
 #endif
