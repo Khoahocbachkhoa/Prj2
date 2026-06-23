@@ -164,13 +164,13 @@ make
 ### Khởi động server
 
 ```bash
-./server.out 8080
+./server.out <port>
 ```
 
 ### Kết nối client
 
 ```bash
-./client.out 127.0.0.1 8080
+./client.out <serv_addr> <port>
 ```
 
 ---
