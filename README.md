@@ -33,23 +33,118 @@ Hệ thống hỗ trợ:
 
 ---
 
-## Cấu trúc thư mục
+## Cài đặt cơ sở dữ liệu
+
+### Tạo database
+
+Đăng nhập PostgreSQL:
+
+```bash
+psql -U postgres
+```
+
+Tạo database:
+
+```sql
+CREATE DATABASE file_sharing_db;
+```
+
+Thoát:
+
+```sql
+\q
+```
+
+### Import schema
+
+```bash
+psql -U postgres -d file_sharing_db -f schema.sql
+```
+
+Kiểm tra:
+
+```bash
+psql -U postgres -d file_sharing_db
+```
+
+Liệt kê bảng:
+
+```sql
+\dt
+```
+
+---
+
+## Thiết lập TLS
+
+Hệ thống sử dụng OpenSSL và chứng chỉ được ký bởi Root CA tự tạo.
+
+### 1. Tạo Root CA
+
+Tạo khóa riêng:
+
+```bash
+openssl genrsa -out ca.key 2048
+```
+
+Tạo chứng chỉ CA:
+
+```bash
+openssl req -x509 \
+    -new \
+    -nodes \
+    -key ca.key \
+    -sha256 \
+    -days 3650 \
+    -out ca.crt
+```
+
+---
+
+### 2. Tạo khóa riêng cho Server
+
+```bash
+openssl genrsa -out server.key 2048
+```
+
+---
+
+### 3. Tạo Certificate Signing Request (CSR)
+
+```bash
+openssl req -new \
+    -key server.key \
+    -out server.csr
+```
+
+---
+
+### 4. Ký chứng chỉ Server bằng Root CA
+
+```bash
+openssl x509 \
+    -req \
+    -in server.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out server.crt \
+    -days 3650 \
+    -sha256
+```
+
+### 5. Kiểm tra chứng chỉ
+
+```bash
+openssl verify \
+    -CAfile ca.crt \
+    server.crt
+```
+
+Kết quả mong đợi:
 
 ```text
-server/
-├── src/
-├── include/
-├── certs/
-│   ├── server.crt
-│   └── server.key
-└── Makefile
-
-client/
-├── src/
-├── include/
-├── certs/
-│   └── ca.crt
-└── Makefile
+server.crt: OK
 ```
 
 ---
@@ -154,11 +249,3 @@ Server sử dụng chứng chỉ số được ký bởi Root CA tự tạo.
 Client xác thực chứng chỉ của Server trước khi thiết lập phiên làm việc.
 
 Toàn bộ dữ liệu đăng nhập, lệnh điều khiển và nội dung tệp được truyền qua kênh mã hóa TLS.
-
----
-
-## Tác giả
-
-* Họ tên: ...
-* Môn học: Lập trình mạng và An toàn thông tin
-* Năm học: ...
