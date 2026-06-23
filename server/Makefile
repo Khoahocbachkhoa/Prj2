@@ -7,7 +7,7 @@ SRC = $(shell find src -name "*.c")
 TARGET = server.out
 
 all:
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) -lpq -lcrypto
+	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) -lpq -lcrypto -lssl
 
 run: all
 	./$(TARGET)

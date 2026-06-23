@@ -124,9 +124,9 @@ void *client_thread(void *arg) {
 
     close(ctx->clientfd);
 
-    free(ctx);
-
     g_ssl_table[ctx->clientfd] = NULL;
+
+    free(ctx);
 
     return NULL;
 }

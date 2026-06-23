@@ -23,7 +23,7 @@ void init(int argc, char *argv[]) {
     if (strcmp(argv[1], "localhost") == 0)
         strcpy(ip, "127.0.0.1");
     else
-        strcpy(ip, argv[2]);
+        strcpy(ip, argv[1]);
 
     // connect to server
     int sockfd = connect_to_server(ip, port);
