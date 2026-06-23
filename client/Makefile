@@ -11,7 +11,7 @@ OBJ = $(SRC:.c=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET) -lcrypto
 	rm -f $(OBJ)
 
 %.o: %.c

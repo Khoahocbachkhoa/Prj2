@@ -87,10 +87,4 @@ void handle_client(int clientfd, SSL *ssl) {
             handle_unsupported(clientfd, buf, &session);
         }
     }
-
-    // Khi client disconnect
-    SSL_shutdown(ssl);
-    SSL_free(ssl);
-
-    g_ssl_table[clientfd] = NULL;
 }

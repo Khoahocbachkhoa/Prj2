@@ -58,8 +58,14 @@ void start_server(int port) {
     // tạo context tls
     SSL_CTX *ctx = tls_server_ctx_create();
 
+    if (ctx == NULL) {
+        fprintf(stderr, "Cannot create TLS context\n");
+        exit(EXIT_FAILURE);
+    }
+
     // luồng mới xử lý client
     while (1) {
+        clilen = sizeof(cliaddr);
         ClientContext *ctx_client = malloc(sizeof(ClientContext));
 
         if (ctx_client == NULL) {
@@ -104,6 +110,8 @@ void start_server(int port) {
 
         pthread_detach(tid);
     }
+
+    SSL_CTX_free(ctx);
 }
 
 void *client_thread(void *arg) {
@@ -117,6 +125,8 @@ void *client_thread(void *arg) {
     close(ctx->clientfd);
 
     free(ctx);
+
+    g_ssl_table[ctx->clientfd] = NULL;
 
     return NULL;
 }

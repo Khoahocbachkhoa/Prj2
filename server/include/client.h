@@ -1,7 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#define MAX_CLIENT 1024
+#define MAX_CLIENT 2048
 
 #include "tls_server.h"
 typedef enum {
