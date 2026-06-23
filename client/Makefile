@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -Wall -Wextra -I./include
+CFLAGS = -I./include
 
 TARGET = client.out
 

@@ -16,7 +16,7 @@ void cmd_list_share_file_with_me(ParsedCommand *cmd) {
 
     char req[512];
 
-    snprintf(req, sizeof(req), "LIST_SHARED_WITH_FILES_ME\r\n");
+    snprintf(req, sizeof(req), "LIST_SHARED_FILES_WITH_ME\r\n");
 
     send_command(state->sockfd, req);
 
